@@ -1,14 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 int main(void)
 {
     FILE *fp;
-    int randomNum;
+    int randomNum1, randomNum2;
     int numRequests;
 
     fp = fopen("sim_input", "w+");
 
-    if (fp == NULL) 
+    if (fp == NULL)
     {
         printf("Could not open file\n");
     }
@@ -23,10 +25,16 @@ int main(void)
 
         for(int ii = 0; ii < numRequests; ii++)
         {
-            randomNum = (rand() % (20 - 1 + 1)) + 1;
-            fprintf(fp,"%d ",randomNum);
-            randomNum = (rand() % (20 - 1 + 1)) + 1;
-            fprintf(fp,"%d\n",randomNum);
+            randomNum1 = (rand() % (20 - 1 + 1)) + 1;
+            randomNum2 = (rand() % (20 - 1 + 1)) + 1;
+
+            while(randomNum1 == randomNum2)
+            {
+              randomNum1 = (rand() % (20 - 1 + 1)) + 1;
+              randomNum2 = (rand() % (20 - 1 + 1)) + 1;
+            }
+
+            fprintf(fp,"%d %d\n",randomNum1, randomNum2);
         }
 
         fclose(fp);
