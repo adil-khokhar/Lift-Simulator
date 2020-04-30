@@ -20,10 +20,12 @@ void *request(void *param)
     fp = fopen("sim_input", "r+");
 
     fscanf(fp, "%d %d", &liftRequests[0].source, &liftRequests[0].destination);
+    fscanf(fp, "%d %d", &liftRequests[1].source, &liftRequests[1].destination);
 
     fclose(fp);
 
-    printf("%d %d",liftRequests[0].source, liftRequests[0],destination);
+    printf("%d %d\n",liftRequests[0].source, liftRequests[0].destination);
+    printf("%d %d\n",liftRequests[1].source, liftRequests[1].destination);
 
     pthread_mutex_unlock(&lock);
 
