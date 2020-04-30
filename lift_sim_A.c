@@ -4,12 +4,26 @@
 #include <semaphore.h>
 
 pthread_mutex_t lock;
+FILE *fp;
+
+typedef struct {
+    int source;
+    int destination;
+} liftRequest;
+
+liftRequest liftRequests[10];
 
 void *request(void *param)
 {
     pthread_mutex_lock(&lock);
 
-    printf("%s\n",(char*)param);
+    fp = fopen("sim_input", "r+");
+
+    fscanf(fp, "%d %d", &liftRequests[0].source, &liftRequests[0].destination);
+
+    fclose(fp);
+
+    printf("%d %d",liftRequests[0].source, liftRequests[0],destination);
 
     pthread_mutex_unlock(&lock);
 
@@ -30,6 +44,7 @@ void *lift(void *param)
 int main(void)
 {
     pthread_t lift_R, lift_1, lift_2, lift_3;
+
     char strr[] = "The request";
     char str1[] = "Lift 1";
     char str2[] = "Lift 2";
@@ -64,7 +79,7 @@ int main(void)
     pthread_join(lift_1,NULL);
     pthread_join(lift_2,NULL);
     pthread_join(lift_3,NULL);
-    pthread_mutex_destroy(&lock); 
+    pthread_mutex_destroy(&lock);
 
     return 0;
 }
