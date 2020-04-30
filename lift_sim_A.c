@@ -2,14 +2,11 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include "buffer.h"
 
 pthread_mutex_t lock;
+sem_t full, empty;
 FILE *fp;
-
-typedef struct {
-    int source;
-    int destination;
-} liftRequest;
 
 liftRequest liftRequests[10];
 
