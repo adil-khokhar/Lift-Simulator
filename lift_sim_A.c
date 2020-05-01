@@ -8,7 +8,7 @@ pthread_mutex_t lock;
 sem_t full, empty;
 FILE *fp;
 
-liftRequest liftRequests[10];
+buffer liftRequests[10];
 
 void *request(void *param)
 {
