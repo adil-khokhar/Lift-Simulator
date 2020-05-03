@@ -40,25 +40,25 @@ int* readNextValue(int* reading)
 
 void writeBuffer(buffer* buffer, int requestNo)
 {
-    fprintf(fileOutput, "--------------------------------");
-    fprintf(fileOutput, "New Lift Request From Floor %d to %d", buffer->source, buffer->destination);
-    fprintf(fileOutput, "Request No: %d", requestNo);
-    fprintf(fileOutput, "--------------------------------");
+    fprintf(fileOutput, "--------------------------------\n");
+    fprintf(fileOutput, "New Lift Request From Floor %d to %d\n", buffer->source, buffer->destination);
+    fprintf(fileOutput, "Request No: %d\n", requestNo);
+    fprintf(fileOutput, "--------------------------------\n");
     fprintf(fileOutput, "\n");
 }
 
 void writeLift(lifts* lift)
 {
-    fprintf(fileOutput, "%s Operation", lift->name);
-    fprintf(fileOutput, "Previous Position: Floor %d", lift->prevRequest);
-    fprintf(fileOutput, "Request: Floor %d to %d", lift->source, lift->destination);
-    fprintf(fileOutput, "Detail Operations");
-    fprintf(fileOutput, "   Go from Floor %d to Floor %d", lift->prevRequest, lift->source);
-    fprintf(fileOutput, "   Go from Floor %d to Floor %d", lift->source, lift->destination);
-    fprintf(fileOutput, "   #movement for this request: %d", lift->movement);
-    fprintf(fileOutput, "   #request: %d", lift->totalRequests);
-    fprintf(fileOutput, "   Total #movement: %d", lift->totalMovement);
-    fprintf(fileOutput, "Current position: Floor %d", lift->destination);
+    fprintf(fileOutput, "%s Operation\n", lift->name);
+    fprintf(fileOutput, "Previous Position: Floor %d\n", lift->prevRequest);
+    fprintf(fileOutput, "Request: Floor %d to %d\n", lift->source, lift->destination);
+    fprintf(fileOutput, "Detail Operations\n");
+    fprintf(fileOutput, "   Go from Floor %d to Floor %d\n", lift->prevRequest, lift->source);
+    fprintf(fileOutput, "   Go from Floor %d to Floor %d\n", lift->source, lift->destination);
+    fprintf(fileOutput, "   #movement for this request: %d\n", lift->movement);
+    fprintf(fileOutput, "   #request: %d\n", lift->totalRequests);
+    fprintf(fileOutput, "   Total #movement: %d\n", lift->totalMovement);
+    fprintf(fileOutput, "Current position: Floor %d\n", lift->destination);
     fprintf(fileOutput, "\n");
 }
 
