@@ -131,6 +131,7 @@ void *request(void *param)
         if(readPointer[0] == 66)
         {
             finished = 1;
+            printf("END OF FILE\n");
         }
 
         else
