@@ -16,7 +16,8 @@ buffer liftRequests[10];
 lifts liftArray[3];
 
 int finished;
-int counter;
+int in;
+int out;
 int isFull;
 int isEmpty;
 
@@ -100,7 +101,8 @@ void initialise()
         liftArray[jj].totalRequests = 0;
     }
 
-    counter = 0;
+    in = 0;
+    out = 0;
     finished = 0;
     requestNo = 0;
     isFull = 0;
@@ -116,7 +118,7 @@ void *request(void *param)
     {
         pthread_mutex_lock(&lock);
 
-        while(isFull == 1)
+        while(((in+1)%10) == out)
         {
             printf("buffer is full");
             pthread_cond_wait(&full, &lock);
@@ -131,18 +133,12 @@ void *request(void *param)
 
         else
         {
-            liftRequests[counter].source = readPointer[0];
-            liftRequests[counter].destination = readPointer[1];
+            liftRequests[in].source = readPointer[0];
+            liftRequests[in].destination = readPointer[1];
             requestNo++;
-            writeBuffer(&liftRequests[counter], requestNo);
+            writeBuffer(&liftRequests[in], requestNo);
             printf("Written buffer");
-            counter++;
-            isEmpty = 0;
-
-            if(counter == 10)
-            {
-                isFull = 1;
-            }
+            in = (in+1)%10;
         }
 
         pthread_cond_signal(&empty);
@@ -160,7 +156,7 @@ void *lift(void *param)
     {
         pthread_mutex_lock(&lock);
 
-        while(isEmpty == 1)
+        while(in == out)
         {
             printf("buffer is empty");
             pthread_cond_wait(&empty, &lock);
@@ -168,18 +164,10 @@ void *lift(void *param)
 
         if(finished == 0)
         {
-            counter--;
-            isFull = 0;
-
-            if(counter == 0)
-            {
-                isEmpty = 1;
-            }
-
             /*sleep(2);*/
 
-            liftArray[i].source = liftRequests[counter].source;
-            liftArray[i].destination = liftRequests[counter].destination;
+            liftArray[i].source = liftRequests[out].source;
+            liftArray[i].destination = liftRequests[out].destination;
             liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
@@ -191,6 +179,8 @@ void *lift(void *param)
             printf("%s after writing\n", liftArray[i].name);
 
             liftArray[i].prevRequest = liftArray[i].destination;
+
+            out = (out+1)%10;
 
             pthread_cond_signal(&full);
         }
