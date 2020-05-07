@@ -16,6 +16,7 @@ buffer liftRequests[10];
 lifts liftArray[3];
 
 int finished;
+int finishLift;
 int in;
 int out;
 int isFull;
@@ -110,6 +111,7 @@ void initialise()
     requestNo = 0;
     isFull = 0;
     isEmpty = 0;
+    finishLift = 0;
 }
 
 void *request(void *param)
@@ -156,12 +158,12 @@ void *lift(void *param)
 {
     int i = *((int *) param);
 
-    while((finished == 0) || (in != out))
+    while(finishLift == 0)
     {
         printf("%s about to enter lock\n", liftArray[i].name);
         pthread_mutex_lock(&lock);
 
-        while(in == out)
+        while((in == out) && (finished != 1))
         {
             printf("buffer is empty\n");
             pthread_cond_wait(&empty, &lock);
@@ -188,6 +190,11 @@ void *lift(void *param)
             out = (out+1)%10;
 
             pthread_cond_signal(&full);
+        }
+
+        if((in == out) && (finished == 1))
+        {
+            finishLift = 1;
         }
 
         pthread_mutex_unlock(&lock);
