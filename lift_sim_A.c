@@ -155,7 +155,7 @@ void *lift(void *param)
 {
     int i = *((int *) param);
 
-    while((finished == 0) || (in =! out))
+    while((finished == 0) || (in != out))
     {
         printf("%s about to enter lock\n", liftArray[i].name);
         pthread_mutex_lock(&lock);
@@ -166,7 +166,7 @@ void *lift(void *param)
             pthread_cond_wait(&empty, &lock);
         }
 
-        if(finished == 0)
+        if(in != out)
         {
             /*sleep(2);*/
 
