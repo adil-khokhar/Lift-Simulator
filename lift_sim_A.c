@@ -118,6 +118,7 @@ void *request(void *param)
 
         while(isFull == 1)
         {
+            printf("buffer is full");
             pthread_cond_wait(&full, &lock);
         }
 
@@ -160,6 +161,7 @@ void *lift(void *param)
 
         while(isEmpty == 1)
         {
+            printf("buffer is empty");
             pthread_cond_wait(&empty, &lock);
         }
 
