@@ -135,6 +135,7 @@ void *request(void *param)
             liftRequests[counter].destination = readPointer[1];
             requestNo++;
             writeBuffer(&liftRequests[counter], requestNo);
+            printf("Written buffer");
             counter++;
             isEmpty = 0;
 
