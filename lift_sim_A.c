@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "lift_sim_A.h"
 #include "structs.h"
@@ -122,7 +123,6 @@ void *request(void *param)
 
         readPointer = readNextValue(reading);
 
-
         if(readPointer[0] == 66)
         {
             finished = 1;
@@ -134,7 +134,6 @@ void *request(void *param)
             liftRequests[counter].destination = readPointer[1];
             requestNo++;
             writeBuffer(&liftRequests[counter], requestNo);
-            printf("buffer is writing\n");
             counter++;
             isEmpty = 0;
 
@@ -174,6 +173,8 @@ void *lift(void *param)
                 isEmpty = 1;
             }
 
+            sleep(2);
+
             liftArray[i].source = liftRequests[counter].source;
             liftArray[i].destination = liftRequests[counter].destination;
             liftArray[i].movement = abs(liftArray[counter].prevRequest - liftArray[counter].source) + abs(liftArray[counter].destination - liftArray[counter].source);
@@ -181,7 +182,8 @@ void *lift(void *param)
             liftArray[i].totalRequests++;
 
             writeLift(&liftArray[i]);
-            printf("%s is writing\n", liftArray[i].name);
+
+            printf("%s writing", liftArray[i].name);
 
             liftArray[counter].prevRequest = liftArray[counter].destination;
 
