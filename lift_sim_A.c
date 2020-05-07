@@ -190,5 +190,7 @@ void *lift(void *param)
         pthread_mutex_unlock(&lock);
     }
 
+    printf("EXITING BECAUSE FINISHED = %d\n", finished);
+
     return NULL;
 }
