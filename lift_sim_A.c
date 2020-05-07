@@ -120,7 +120,7 @@ void *request(void *param)
 
         while(((in+1)%10) == out)
         {
-            printf("buffer is full");
+            printf("buffer is full\n");
             pthread_cond_wait(&full, &lock);
         }
 
@@ -137,7 +137,7 @@ void *request(void *param)
             liftRequests[in].destination = readPointer[1];
             requestNo++;
             writeBuffer(&liftRequests[in], requestNo);
-            printf("Written buffer");
+            printf("Written buffer\n");
             in = (in+1)%10;
         }
 
@@ -158,7 +158,7 @@ void *lift(void *param)
 
         while(in == out)
         {
-            printf("buffer is empty");
+            printf("buffer is empty\n");
             pthread_cond_wait(&empty, &lock);
         }
 
