@@ -155,8 +155,9 @@ void *lift(void *param)
 {
     int i = *((int *) param);
 
-    while(finished == 0)
+    while((finished != 1) && (in == out))
     {
+        printf("%s about to enter lock", liftArray[i].name);
         pthread_mutex_lock(&lock);
 
         while(in == out)
@@ -191,7 +192,7 @@ void *lift(void *param)
         pthread_mutex_unlock(&lock);
     }
 
-    printf("EXITING BECAUSE FINISHED = %d\n", finished);
+    printf("EXITING BECAUSE FINISHED %s\n", liftArray[i].name);
 
     return NULL;
 }
