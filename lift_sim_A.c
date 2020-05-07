@@ -177,7 +177,7 @@ void *lift(void *param)
 
             liftArray[i].source = liftRequests[counter].source;
             liftArray[i].destination = liftRequests[counter].destination;
-            liftArray[i].movement = abs(liftArray[counter].prevRequest - liftArray[counter].source) + abs(liftArray[counter].destination - liftArray[counter].source);
+            liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
@@ -187,7 +187,7 @@ void *lift(void *param)
 
             printf("%s after writing\n", liftArray[i].name);
 
-            liftArray[counter].prevRequest = liftArray[counter].destination;
+            liftArray[i].prevRequest = liftArray[i].destination;
 
             pthread_cond_signal(&full);
         }
