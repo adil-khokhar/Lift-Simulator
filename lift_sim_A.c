@@ -66,8 +66,6 @@ int main(void)
     pthread_join(lift_2,NULL);
     pthread_join(lift_3,NULL);
 
-    free(arg);
-
     pthread_mutex_destroy(&lock);
     pthread_cond_destroy(&full);
     pthread_cond_destroy(&empty);
