@@ -26,8 +26,8 @@ int main(void)
 {
     pthread_t lift_R;
     pthread_t lift_1;
-    pthread_t lift_2;
-    pthread_t lift_3;
+    /*pthread_t lift_2;
+    pthread_t lift_3;*/
 
     int *arg = malloc(sizeof(*arg));
 
