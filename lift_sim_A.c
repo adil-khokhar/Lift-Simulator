@@ -155,7 +155,7 @@ void *lift(void *param)
 {
     int i = *((int *) param);
 
-    while((finished != 1) && (in == out))
+    while((finished != 1) && (in != out))
     {
         printf("%s about to enter lock", liftArray[i].name);
         pthread_mutex_lock(&lock);
