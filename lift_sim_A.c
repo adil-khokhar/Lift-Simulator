@@ -181,9 +181,11 @@ void *lift(void *param)
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
+            printf("%s before writing\n", liftArray[i].name);
+
             writeLift(&liftArray[i]);
 
-            printf("%s writing", liftArray[i].name);
+            printf("%s after writing\n", liftArray[i].name);
 
             liftArray[counter].prevRequest = liftArray[counter].destination;
 
