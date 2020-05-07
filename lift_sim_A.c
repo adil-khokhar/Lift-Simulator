@@ -134,6 +134,7 @@ void *request(void *param)
             liftRequests[counter].destination = readPointer[1];
             requestNo++;
             writeBuffer(&liftRequests[counter], requestNo);
+            printf("buffer is writing\n");
             counter++;
             isEmpty = 0;
 
@@ -180,6 +181,7 @@ void *lift(void *param)
             liftArray[i].totalRequests++;
 
             writeLift(&liftArray[i]);
+            printf("%s is writing\n", liftArray[i].name);
 
             liftArray[counter].prevRequest = liftArray[counter].destination;
 
