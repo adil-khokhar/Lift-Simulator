@@ -62,6 +62,14 @@ void writeLift(lifts* lift)
     fprintf(fileOutput, "\n");
 }
 
+void writeResult(int movement, int requests)
+{
+    fprintf(fileOutput, "--------------------------------\n");
+    fprintf(fileOutput, "Total Number of Requests: %d\n", requests);
+    fprintf(fileOutput, "Total Number of Movements: %d\n", movement);
+    fprintf(fileOutput, "--------------------------------\n");
+}
+
 void closeFiles()
 {
     fclose(fileInput);

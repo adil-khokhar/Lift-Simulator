@@ -70,6 +70,7 @@ int main(void)
     pthread_mutex_destroy(&lock);
     pthread_cond_destroy(&full);
     pthread_cond_destroy(&empty);
+    writeResult((liftArray[0].movement+liftArray[1].movement+liftArray[2].movement), requestNo);
     closeFiles();
 
     return 0;
