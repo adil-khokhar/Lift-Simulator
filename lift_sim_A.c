@@ -32,7 +32,7 @@ int main(void)
 
     /*int *arg = malloc(sizeof(*arg));*/
 
-    int i
+    int i;
 
 
     initialise();
