@@ -30,7 +30,10 @@ int main(void)
     pthread_t lift_2;
     pthread_t lift_3;
 
-    int *arg = malloc(sizeof(*arg));
+    /*int *arg = malloc(sizeof(*arg));*/
+
+    int i
+
 
     initialise();
     openFiles();
@@ -40,20 +43,20 @@ int main(void)
         printf("Can't create Lift R\n");
     }
 
-    *arg = 0;
-    if(pthread_create(&lift_1, NULL, lift, arg) == -1)
+    i = 0;
+    if(pthread_create(&lift_1, NULL, lift, (void*)&i) == -1)
     {
         printf("Can't create Lift R\n");
     }
 
-    *arg = 1;
-    if(pthread_create(&lift_2, NULL, lift, arg) == -1)
+    i = 1;
+    if(pthread_create(&lift_2, NULL, lift, (void*)&i) == -1)
     {
         printf("Can't create Lift R\n");
     }
 
-    *arg = 2;
-    if(pthread_create(&lift_3, NULL, lift, arg) == -1)
+    i = 2;
+    if(pthread_create(&lift_3, NULL, lift, (void*)&i) == -1)
     {
         printf("Can't create Lift R\n");
     }
