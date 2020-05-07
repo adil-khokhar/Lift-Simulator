@@ -45,7 +45,7 @@ int main(void)
         printf("Can't create Lift R\n");
     }
 
-    *arg = 1;
+    /**arg = 1;
     if(pthread_create(&lift_2, NULL, lift, arg) == -1)
     {
         printf("Can't create Lift R\n");
@@ -55,12 +55,12 @@ int main(void)
     if(pthread_create(&lift_3, NULL, lift, arg) == -1)
     {
         printf("Can't create Lift R\n");
-    }
+    }*/
 
     pthread_join(lift_R,NULL);
     pthread_join(lift_1,NULL);
-    pthread_join(lift_2,NULL);
-    pthread_join(lift_3,NULL);
+    /*pthread_join(lift_2,NULL);
+    pthread_join(lift_3,NULL);*/
 
     pthread_mutex_destroy(&lock);
     pthread_cond_destroy(&full);
@@ -173,7 +173,7 @@ void *lift(void *param)
                 isEmpty = 1;
             }
 
-            sleep(2);
+            /*sleep(2);*/
 
             liftArray[i].source = liftRequests[counter].source;
             liftArray[i].destination = liftRequests[counter].destination;
