@@ -31,9 +31,9 @@ int main(void)
     pthread_t lift_2;
     pthread_t lift_3;
 
-    int *arg1 = malloc(sizeof(*arg1));
-    int *arg2 = malloc(sizeof(*arg2));
-    int *arg3 = malloc(sizeof(*arg3));
+    int *arg1 = (int*)malloc(sizeof(int));
+    int *arg2 = (int*)malloc(sizeof(int));
+    int *arg3 = (int*)malloc(sizeof(int));
 
     initialise();
     openFiles();
