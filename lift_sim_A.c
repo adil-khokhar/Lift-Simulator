@@ -175,7 +175,7 @@ void *lift(void *param)
 
         if(in != out)
         {
-            /*sleep(2);*/
+            sleep(1);
 
             liftArray[i].source = liftRequests[out].source;
             liftArray[i].destination = liftRequests[out].destination;
