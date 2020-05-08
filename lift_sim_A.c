@@ -43,19 +43,19 @@ int main(void)
         printf("Can't create Lift R\n");
     }
 
-    arg1 = 0;
+    *arg1 = 0;
     if(pthread_create(&lift_1, NULL, lift, arg1) == -1)
     {
         printf("Can't create Lift 1\n");
     }
 
-    arg2 = 1;
+    *arg2 = 1;
     if(pthread_create(&lift_2, NULL, lift, arg2) == -1)
     {
         printf("Can't create Lift 2\n");
     }
 
-    arg3 = 2;
+    *arg3 = 2;
     if(pthread_create(&lift_3, NULL, lift, arg3) == -1)
     {
         printf("Can't create Lift 3\n");
