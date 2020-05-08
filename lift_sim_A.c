@@ -47,19 +47,19 @@ int main(void)
     i = 0;
     if(pthread_create(&lift_1, NULL, lift, (void*)&i) == -1)
     {
-        printf("Can't create Lift R\n");
+        printf("Can't create Lift 1\n");
     }
 
     i = 1;
     if(pthread_create(&lift_2, NULL, lift, (void*)&i) == -1)
     {
-        printf("Can't create Lift R\n");
+        printf("Can't create Lift 2\n");
     }
 
     i = 2;
     if(pthread_create(&lift_3, NULL, lift, (void*)&i) == -1)
     {
-        printf("Can't create Lift R\n");
+        printf("Can't create Lift 3\n");
     }
 
     pthread_join(lift_R,NULL);
