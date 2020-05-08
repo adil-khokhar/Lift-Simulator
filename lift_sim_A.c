@@ -66,6 +66,10 @@ int main(void)
     pthread_join(lift_2,NULL);
     pthread_join(lift_3,NULL);
 
+    free(arg1);
+    free(arg2);
+    free(arg3);
+
     pthread_mutex_destroy(&lock);
     pthread_cond_destroy(&full);
     pthread_cond_destroy(&empty);
@@ -201,7 +205,6 @@ void *lift(void *param)
     }
 
     printf("EXITING BECAUSE FINISHED %s\n", liftArray[i].name);
-    free(i);
 
     return NULL;
 }
