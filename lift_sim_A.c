@@ -31,10 +31,9 @@ int main(void)
     pthread_t lift_2;
     pthread_t lift_3;
 
-    /*int *arg = malloc(sizeof(*arg));*/
-
-    int i;
-
+    int *arg1 = malloc(sizeof(*arg1));
+    int *arg2 = malloc(sizeof(*arg2));
+    int *arg3 = malloc(sizeof(*arg3));
 
     initialise();
     openFiles();
@@ -44,20 +43,20 @@ int main(void)
         printf("Can't create Lift R\n");
     }
 
-    i = 0;
-    if(pthread_create(&lift_1, NULL, lift, (void*)&i) == -1)
+    arg1 = 0;
+    if(pthread_create(&lift_1, NULL, lift, arg1) == -1)
     {
         printf("Can't create Lift 1\n");
     }
 
-    i = 1;
-    if(pthread_create(&lift_2, NULL, lift, (void*)&i) == -1)
+    arg2 = 1;
+    if(pthread_create(&lift_2, NULL, lift, arg2) == -1)
     {
         printf("Can't create Lift 2\n");
     }
 
-    i = 2;
-    if(pthread_create(&lift_3, NULL, lift, (void*)&i) == -1)
+    arg3 = 2;
+    if(pthread_create(&lift_3, NULL, lift, arg3) == -1)
     {
         printf("Can't create Lift 3\n");
     }
@@ -202,6 +201,7 @@ void *lift(void *param)
     }
 
     printf("EXITING BECAUSE FINISHED %s\n", liftArray[i].name);
+    free(i);
 
     return NULL;
 }
