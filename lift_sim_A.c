@@ -39,20 +39,20 @@ int main(int argc, char *argv[])
 
     if( argc == 3 )
     {
-        if(*argv[1] < 1)
+        if(atoi(argv[1]) < 1)
         {
             printf("Error! Buffer Size has to be greater than or equal to 1!");
         }
 
-        else if(*argv[2] < 0)
+        else if(atoi(argv[2]) < 0)
         {
             printf("Error! Time has to be greater than or equal to 0!");
         }
 
         else
         {
-            bufferSize = &argv[1];
-            sleepTime = &argv[2];
+            bufferSize = atoi(argv[1]);
+            sleepTime = atoi(argv[2]);
 
             initialise();
             openFiles();
