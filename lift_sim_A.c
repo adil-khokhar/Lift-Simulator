@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
         else
         {
-            bufferSize = atoi(argv[1]);
+            bufferSize = atoi(argv[1]) + 1;
             sleepTime = atoi(argv[2]);
 
             initialise();
@@ -153,7 +153,7 @@ void *request(void *param)
     {
         pthread_mutex_lock(&lock);
 
-        while(((in+1)%10) == out)
+        while(((in+1)%bufferSize) == out)
         {
             printf("buffer is full\n");
             pthread_cond_wait(&full, &lock);
@@ -174,7 +174,7 @@ void *request(void *param)
             requestNo++;
             writeBuffer(&liftRequests[in], requestNo);
             printf("Written buffer\n");
-            in = (in+1)%10;
+            in = (in+1)%bufferSize;
         }
 
         pthread_cond_signal(&empty);
@@ -201,7 +201,7 @@ void *lift(void *param)
 
         if(in != out)
         {
-            sleep(1);
+            sleep(sleepTime);
 
             liftArray[i].source = liftRequests[out].source;
             liftArray[i].destination = liftRequests[out].destination;
@@ -217,7 +217,7 @@ void *lift(void *param)
 
             liftArray[i].prevRequest = liftArray[i].destination;
 
-            out = (out+1)%10;
+            out = (out+1)%bufferSize;
 
             pthread_cond_signal(&full);
         }
