@@ -15,6 +15,8 @@ pthread_cond_t empty;
 buffer liftRequests[10];
 lifts liftArray[3];
 
+int bufferSize;
+int sleepTime;
 int finished;
 int finishLift;
 int in;
@@ -24,7 +26,7 @@ int isEmpty;
 
 int requestNo;
 
-int main(void)
+int main(int argc, char *argv[])
 {
     pthread_t lift_R;
     pthread_t lift_1;
@@ -35,46 +37,70 @@ int main(void)
     int *arg2 = (int*)malloc(sizeof(int));
     int *arg3 = (int*)malloc(sizeof(int));
 
-    initialise();
-    openFiles();
-
-    if(pthread_create(&lift_R, NULL, request, NULL) == -1)
+    if( argc == 3 )
     {
-        printf("Can't create Lift R\n");
+        if(argv[1] < 1)
+        {
+            printf("Error! Buffer Size has to be greater than or equal to 1!");
+        }
+
+        else if(argv[2] < 0)
+        {
+            printf("Error! Time has to be greater than or equal to 0!");
+        }
+
+        else
+        {
+            bufferSize = argv[1];
+            sleepTime = argv[2];
+
+            initialise();
+            openFiles();
+
+            if(pthread_create(&lift_R, NULL, request, NULL) == -1)
+            {
+                printf("Can't create Lift R\n");
+            }
+
+            *arg1 = 0;
+            if(pthread_create(&lift_1, NULL, lift, arg1) == -1)
+            {
+                printf("Can't create Lift 1\n");
+            }
+
+            *arg2 = 1;
+            if(pthread_create(&lift_2, NULL, lift, arg2) == -1)
+            {
+                printf("Can't create Lift 2\n");
+            }
+
+            *arg3 = 2;
+            if(pthread_create(&lift_3, NULL, lift, arg3) == -1)
+            {
+                printf("Can't create Lift 3\n");
+            }
+
+            pthread_join(lift_R,NULL);
+            pthread_join(lift_1,NULL);
+            pthread_join(lift_2,NULL);
+            pthread_join(lift_3,NULL);
+
+            pthread_mutex_destroy(&lock);
+            pthread_cond_destroy(&full);
+            pthread_cond_destroy(&empty);
+            writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), requestNo);
+            closeFiles();
+        }
     }
 
-    *arg1 = 0;
-    if(pthread_create(&lift_1, NULL, lift, arg1) == -1)
+    else
     {
-        printf("Can't create Lift 1\n");
+        printf("Error! Incorrect Number of Arguments!");
     }
-
-    *arg2 = 1;
-    if(pthread_create(&lift_2, NULL, lift, arg2) == -1)
-    {
-        printf("Can't create Lift 2\n");
-    }
-
-    *arg3 = 2;
-    if(pthread_create(&lift_3, NULL, lift, arg3) == -1)
-    {
-        printf("Can't create Lift 3\n");
-    }
-
-    pthread_join(lift_R,NULL);
-    pthread_join(lift_1,NULL);
-    pthread_join(lift_2,NULL);
-    pthread_join(lift_3,NULL);
 
     free(arg1);
     free(arg2);
     free(arg3);
-
-    pthread_mutex_destroy(&lock);
-    pthread_cond_destroy(&full);
-    pthread_cond_destroy(&empty);
-    writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), requestNo);
-    closeFiles();
 
     return 0;
 }
