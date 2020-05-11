@@ -63,9 +63,9 @@ int main(void)
     writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), requestNo);
     closeFiles();
 
-    sem_destroy(&mutex);
-    sem_destroy(&full);
-    sem_destroy(&empty);
+    sem_unlink(mutex);
+    sem_unlink(full);
+    sem_unlink(empty);
 
     return 0;
 }
@@ -77,10 +77,6 @@ void initialise()
     mutex = sem_open("/mutex", O_CREAT|O_EXCL, 0644, 1);
     full = sem_open("/full", O_CREAT|O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT|O_EXCL, 0644, 10);
-
-    /*sem_init(&mutex,0,1);
-    sem_init(&full,0,0);
-    sem_init(&empty,0,10);*/
 
     strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
@@ -119,17 +115,21 @@ void request()
 
         else
         {
-            sem_wait(&empty);
-            sem_wait(&mutex);
+            sem_wait(empty);
+            sem_wait(mutex);
 
             liftRequests[in].source = readPointer[0];
             liftRequests[in].destination = readPointer[1];
             writeBuffer(&liftRequests[in], requestNo);
 
-            sem_post(&mutex);
-            sem_post(&full);
+            sem_post(mutex);
+            sem_post(full);
         }
     }
+
+    sem_close(mutex);
+    sem_close(full);
+    sem_close(empty);
 
     return NULL;
 }
@@ -138,8 +138,8 @@ void lift()
 {
     while(finished == 0)
     {
-        sem_wait(&full);
-        sem_wait(&mutex);
+        sem_wait(full);
+        sem_wait(mutex);
 
         if(in != out)
         {
@@ -156,9 +156,13 @@ void lift()
             liftArray[i].prevRequest = liftArray[i].destination;
         }
 
-        sem_post(&mutex);
-        sem_post(&empty);
+        sem_post(mutex);
+        sem_post(empty);
     }
+
+    sem_close(mutex);
+    sem_close(full);
+    sem_close(empty);
 
     return NULL;
 }
