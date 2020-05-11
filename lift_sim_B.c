@@ -8,9 +8,9 @@
 #include "structs.h"
 #include "fileIO.h"
 
-sem_t mutex;
-sem_t empty;
-sem_t full;
+sem_t *mutex;
+sem_t *empty;
+sem_t *full;
 
 buffer liftRequests[10];
 lifts liftArray[3];
@@ -74,9 +74,13 @@ void initialise()
 {
     int jj;
 
-    sem_init(&mutex,0,1);
+    mutex = sem_open("/mutex", O_CREAT|O_EXCL, 0644, 1);
+    full = sem_open("/full", O_CREAT|O_EXCL, 0644, 0);
+    empty = sem_open("/empty", O_CREAT|O_EXCL, 0644, 10);
+
+    /*sem_init(&mutex,0,1);
     sem_init(&full,0,0);
-    sem_init(&empty,0,10);
+    sem_init(&empty,0,10);*/
 
     strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
