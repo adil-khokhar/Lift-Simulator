@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/shm.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/mman.h>
@@ -63,7 +64,7 @@ int main(void)
 
         if(lifts[jj] == 0)
         {
-            lift(ii);
+            lift(jj);
             exit(0);
         }
     }
@@ -88,9 +89,9 @@ int main(void)
     shm_unlink("/liftbuffer");
     shm_unlink("/liftarray");
 
-    sem_unlink(mutex);
-    sem_unlink(full);
-    sem_unlink(empty);
+    sem_unlink(&mutex);
+    sem_unlink(&full);
+    sem_unlink(&empty);
 
     return 0;
 }
@@ -103,15 +104,15 @@ void initialise()
     full = sem_open("/full", O_CREAT|O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT|O_EXCL, 0644, 10);
 
-    strcpy(liftArray[0]->name, "Lift-1");
-    strcpy(liftArray[1]->name, "Lift-2");
-    strcpy(liftArray[2]->name, "Lift-3");
+    strcpy(liftArray[0].name, "Lift-1");
+    strcpy(liftArray[1].name, "Lift-2");
+    strcpy(liftArray[2].name, "Lift-3");
 
     for(jj = 0; jj < 3; jj++)
     {
-        liftArray[jj]->prevRequest = 1;
-        liftArray[jj]->totalMovement = 0;
-        liftArray[jj]->totalRequests = 0;
+        liftArray[jj].prevRequest = 1;
+        liftArray[jj].totalMovement = 0;
+        liftArray[jj].totalRequests = 0;
     }
 
     in = 0;
@@ -143,11 +144,11 @@ void request()
             sem_wait(empty);
             sem_wait(mutex);
 
-            liftRequests[in]->source = readPointer[0];
-            liftRequests[in]->destination = readPointer[1];
+            liftRequests[in].source = readPointer[0];
+            liftRequests[in].destination = readPointer[1];
             requestNo++;
-            writeBuffer(liftRequests[in], requestNo);
-            in = (in+1)%bufferSize;
+            writeBuffer(*liftRequests[in], requestNo);
+            in = (in+1)%10;
 
             sem_post(mutex);
             sem_post(full);
@@ -182,7 +183,7 @@ void lift(int i)
 
             liftArray[i]->prevRequest = liftArray[i]->destination;
 
-            out = (out+1)%bufferSize;
+            out = (out+1)%10;
         }
 
         sem_post(mutex);
