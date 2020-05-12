@@ -12,9 +12,10 @@ sem_t *mutex;
 sem_t *empty;
 sem_t *full;
 
-buffer liftRequests[10];
-lifts liftArray[3];
+buffer* liftRequests;
+lifts* liftArray;
 
+int* lifts;
 int finished;
 int finishLift;
 int in;
@@ -26,9 +27,20 @@ int requestNo;
 
 int main(void)
 {
+    int fd;
+    int fd2;
     pid_t lift_R;
     pid_t lifts[3];
     int jj;
+
+    fd = shm_open("/liftbuffer", O_CREAT | O_EXCL | O_RDWR, 0600);
+    fd2 = shm_open("/liftarray", O_CREAT | O_EXCL | O_RDWR, 0600);
+
+    ftruncate(fd, 10*sizeof(buffer));
+    ftruncate(fd, 3*sizeof(lifts));
+
+    *liftRequests = (buffer *)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    *liftArray = (lifts *)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
 
     initialise();
     openFiles();
@@ -63,6 +75,15 @@ int main(void)
     writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), requestNo);
     closeFiles();
 
+    munmap(liftRequests, 3*sizeof(buffer));
+    close(fd);
+
+    munmap(liftArray, 10*sizeof(lifts));
+    close(fd2);
+
+    shm_unlink("/liftbuffer");
+    shm_unlink("/liftarray");
+
     sem_unlink(mutex);
     sem_unlink(full);
     sem_unlink(empty);
@@ -78,15 +99,15 @@ void initialise()
     full = sem_open("/full", O_CREAT|O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT|O_EXCL, 0644, 10);
 
-    strcpy(liftArray[0].name, "Lift-1");
-    strcpy(liftArray[1].name, "Lift-2");
-    strcpy(liftArray[2].name, "Lift-3");
+    strcpy(liftArray[0]->name, "Lift-1");
+    strcpy(liftArray[1]->name, "Lift-2");
+    strcpy(liftArray[2]->name, "Lift-3");
 
     for(jj = 0; jj < 3; jj++)
     {
-        liftArray[jj].prevRequest = 1;
-        liftArray[jj].totalMovement = 0;
-        liftArray[jj].totalRequests = 0;
+        liftArray[jj]->prevRequest = 1;
+        liftArray[jj]->totalMovement = 0;
+        liftArray[jj]->totalRequests = 0;
     }
 
     in = 0;
@@ -118,9 +139,11 @@ void request()
             sem_wait(empty);
             sem_wait(mutex);
 
-            liftRequests[in].source = readPointer[0];
-            liftRequests[in].destination = readPointer[1];
-            writeBuffer(&liftRequests[in], requestNo);
+            liftRequests[in]->source = readPointer[0];
+            liftRequests[in]->destination = readPointer[1];
+            requestNo++;
+            writeBuffer(liftRequests[in], requestNo);
+            in = (in+1)%bufferSize;
 
             sem_post(mutex);
             sem_post(full);
@@ -134,7 +157,7 @@ void request()
     return NULL;
 }
 
-void lift()
+void lift(int i)
 {
     while(finished == 0)
     {
@@ -145,15 +168,17 @@ void lift()
         {
             sleep(1);
 
-            liftArray[i].source = liftRequests[out].source;
-            liftArray[i].destination = liftRequests[out].destination;
-            liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
-            liftArray[i].totalMovement += liftArray[i].movement;
-            liftArray[i].totalRequests++;
+            liftArray[i]->source = liftRequests[out]->source;
+            liftArray[i]->destination = liftRequests[out]->destination;
+            liftArray[i]->movement = abs(liftArray[i]->prevRequest - liftArray[i]->source) + abs(liftArray[i]->destination - liftArray[i]->source);
+            liftArray[i]->totalMovement += liftArray[i]->movement;
+            liftArray[i]->totalRequests++;
 
-            writeLift(&liftArray[i]);
+            writeLift(liftArray[i]);
 
-            liftArray[i].prevRequest = liftArray[i].destination;
+            liftArray[i]->prevRequest = liftArray[i]->destination;
+
+            out = (out+1)%bufferSize;
         }
 
         sem_post(mutex);
