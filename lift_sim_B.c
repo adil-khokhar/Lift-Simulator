@@ -3,6 +3,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/types.h>
 
 #include "lift_sim_B.h"
 #include "structs.h"
@@ -15,7 +20,6 @@ sem_t *full;
 buffer* liftRequests;
 lifts* liftArray;
 
-int* lifts;
 int finished;
 int finishLift;
 int in;
