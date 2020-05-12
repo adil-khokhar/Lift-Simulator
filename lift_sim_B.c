@@ -177,7 +177,7 @@ void lift(int i)
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
-            writeLift(liftArray[i]);
+            writeLift(*liftArray[i]);
 
             liftArray[i].prevRequest = liftArray[i].destination;
 
