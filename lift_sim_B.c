@@ -147,7 +147,7 @@ void request()
             liftRequests[in].source = readPointer[0];
             liftRequests[in].destination = readPointer[1];
             requestNo++;
-            writeBuffer(*liftRequests[in], requestNo);
+            writeBuffer(&liftRequests[in], requestNo);
             in = (in+1)%10;
 
             sem_post(mutex);
@@ -177,7 +177,7 @@ void lift(int i)
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
-            writeLift(*liftArray[i]);
+            writeLift(&liftArray[i]);
 
             liftArray[i].prevRequest = liftArray[i].destination;
 
