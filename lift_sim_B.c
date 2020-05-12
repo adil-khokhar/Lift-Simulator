@@ -158,8 +158,6 @@ void request()
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
-
-    return NULL;
 }
 
 void lift(int i)
@@ -173,15 +171,15 @@ void lift(int i)
         {
             sleep(1);
 
-            liftArray[i]->source = liftRequests[out]->source;
-            liftArray[i]->destination = liftRequests[out]->destination;
-            liftArray[i]->movement = abs(liftArray[i]->prevRequest - liftArray[i]->source) + abs(liftArray[i]->destination - liftArray[i]->source);
-            liftArray[i]->totalMovement += liftArray[i]->movement;
-            liftArray[i]->totalRequests++;
+            liftArray[i].source = liftRequests[out].source;
+            liftArray[i].destination = liftRequests[out].destination;
+            liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
+            liftArray[i].totalMovement += liftArray[i].movement;
+            liftArray[i].totalRequests++;
 
             writeLift(liftArray[i]);
 
-            liftArray[i]->prevRequest = liftArray[i]->destination;
+            liftArray[i].prevRequest = liftArray[i].destination;
 
             out = (out+1)%10;
         }
@@ -193,6 +191,4 @@ void lift(int i)
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
-
-    return NULL;
 }
