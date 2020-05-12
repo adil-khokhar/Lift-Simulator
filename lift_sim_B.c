@@ -1,13 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <semaphore.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/mman.h>
+#include <semaphore.h>
 
 #include "lift_sim_B.h"
 #include "structs.h"
