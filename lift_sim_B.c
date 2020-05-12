@@ -89,9 +89,9 @@ int main(void)
     shm_unlink("/liftbuffer");
     shm_unlink("/liftarray");
 
-    sem_unlink(&mutex);
-    sem_unlink(&full);
-    sem_unlink(&empty);
+    sem_unlink("/mutex");
+    sem_unlink("/full");
+    sem_unlink("/empty");
 
     return 0;
 }
