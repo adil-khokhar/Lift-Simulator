@@ -40,12 +40,12 @@ int main(void)
     pid_t lift_processes[3];
     int jj;
 
-    bufferFd = shm_open("/liftbuffer", O_CREAT | O_EXCL | O_RDWR, 0666);
+    bufferFd = shm_open("/liftbuffer", O_CREAT | O_RDWR, 0666);
     ftruncate(bufferFd, 10*sizeof(buffer));
     liftBuffer = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, bufferFd, 0);
     liftBuffer[0].source = 0;
 
-    arrayFd = shm_open("/liftarray", O_CREAT | O_EXCL | O_RDWR, 0666);
+    arrayFd = shm_open("/liftarray", O_CREAT | O_RDWR, 0666);
     ftruncate(arrayFd, 3*sizeof(lifts));
     liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, arrayFd, 0);
 
