@@ -145,7 +145,7 @@ void request()
 
         else
         {
-            print("About to enter reading semaphore\n");
+            printf("About to enter reading semaphore\n");
             sem_wait(empty);
             sem_wait(mutex);
 
