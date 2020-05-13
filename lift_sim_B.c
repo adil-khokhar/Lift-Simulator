@@ -146,6 +146,7 @@ void request()
             sem_wait(empty);
             sem_wait(mutex);
 
+            printf("Reading File\n");
             liftBuffer[in].source = readPointer[0];
             liftBuffer[in].destination = readPointer[1];
             requestNo++;
@@ -173,6 +174,7 @@ void lift(int i)
         {
             sleep(1);
 
+            printf("Attempting %s\n",liftArray[i].name);
             liftArray[i].source = liftBuffer[out].source;
             liftArray[i].destination = liftBuffer[out].destination;
             liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
