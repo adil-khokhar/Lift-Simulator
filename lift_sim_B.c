@@ -130,6 +130,7 @@ void request()
 {
     int reading[2];
     int* readPointer;
+    int value;
 
     while(finished == 0)
     {
@@ -147,6 +148,8 @@ void request()
         else
         {
             printf("About to enter reading semaphore\n");
+            sem_getvalue(empty, &value);
+            printf("Value of Reading Semaphore before is %d\n",value);
             sem_wait(empty);
             printf("About to enter reading semaphore lock\n");
             sem_wait(mutex);
