@@ -167,6 +167,7 @@ void lift(int i)
 {
     while(finished == 0)
     {
+        printf("Pre-Semaphore %s\n",liftArray[i].name);
         sem_wait(full);
         sem_wait(mutex);
 
