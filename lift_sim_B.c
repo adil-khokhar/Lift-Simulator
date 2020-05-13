@@ -14,6 +14,8 @@
 #include "structs.h"
 #include "fileIO.h"
 
+int ftruncate(int f, off_t length);
+
 sem_t *mutex;
 sem_t *empty;
 sem_t *full;
