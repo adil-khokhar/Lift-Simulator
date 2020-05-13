@@ -34,8 +34,8 @@ int requestNo;
 
 int main(void)
 {
-    int fd;
-    int fd2;
+    int bufferFd;
+    int arrayFd;
     pid_t lift_R;
     pid_t lift_processes[3];
     int jj;
