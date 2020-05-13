@@ -20,7 +20,7 @@ sem_t *mutex;
 sem_t *empty;
 sem_t *full;
 
-buffer* liftRequests;
+buffer* liftBuffer;
 lifts* liftArray;
 
 int finished;
@@ -40,14 +40,14 @@ int main(void)
     pid_t lift_processes[3];
     int jj;
 
-    fd = shm_open("/liftbuffer", O_CREAT | O_EXCL | O_RDWR, 0666);
-    fd2 = shm_open("/liftarray", O_CREAT | O_EXCL | O_RDWR, 0666);
+    bufferFd = shm_open("/liftbuffer", O_CREAT | O_EXCL | O_RDWR, 0666);
+    ftruncate(bufferFd, 10*sizeof(buffer));
+    liftBuffer = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, bufferFd, 0);
+    liftBuffer[0].source = 0;
 
-    ftruncate(fd, 11*sizeof(buffer));
-    ftruncate(fd2, 4*sizeof(lifts));
-
-    liftRequests = (buffer*)mmap(0, 11*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    liftArray = (lifts*)mmap(0, 4*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
+    arrayFd = shm_open("/liftarray", O_CREAT | O_EXCL | O_RDWR, 0666);
+    ftruncate(arrayFd, 3*sizeof(lifts));
+    liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, arrayFd, 0);
 
     initialise();
     openFiles();
@@ -82,7 +82,7 @@ int main(void)
     writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), requestNo);
     closeFiles();
 
-    munmap(liftRequests, 3*sizeof(buffer));
+    munmap(liftBuffer, 3*sizeof(buffer));
     close(fd);
 
     munmap(liftArray, 10*sizeof(lifts));
@@ -146,10 +146,10 @@ void request()
             sem_wait(empty);
             sem_wait(mutex);
 
-            liftRequests[in].source = readPointer[0];
-            liftRequests[in].destination = readPointer[1];
+            liftBuffer[in].source = readPointer[0];
+            liftBuffer[in].destination = readPointer[1];
             requestNo++;
-            writeBuffer(&liftRequests[in], requestNo);
+            writeBuffer(&liftBuffer[in], requestNo);
             in = (in+1)%10;
 
             sem_post(mutex);
@@ -173,8 +173,8 @@ void lift(int i)
         {
             sleep(1);
 
-            liftArray[i].source = liftRequests[out].source;
-            liftArray[i].destination = liftRequests[out].destination;
+            liftArray[i].source = liftBuffer[out].source;
+            liftArray[i].destination = liftBuffer[out].destination;
             liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
