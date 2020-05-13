@@ -102,9 +102,9 @@ void initialise()
 {
     int jj;
 
-    mutex = sem_open("/mutex", O_CREAT|O_EXCL, 0644, 1);
-    full = sem_open("/full", O_CREAT|O_EXCL, 0644, 0);
-    empty = sem_open("/empty", O_CREAT|O_EXCL, 0644, 10);
+    mutex = sem_open("/mutex", O_CREAT, 0644, 1);
+    full = sem_open("/full", O_CREAT, 0644, 0);
+    empty = sem_open("/empty", O_CREAT, 0644, 10);
 
     strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
