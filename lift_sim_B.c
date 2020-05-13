@@ -136,7 +136,7 @@ void request()
         readPointer = readNextValue(reading);
 
         printf("Reading value from file\n");
-        printf("Source = %d Destination = %d\n",readPointer[0], readPointer[1])
+        printf("Source = %d Destination = %d\n",readPointer[0], readPointer[1]);
 
         if(readPointer[0] == 66)
         {
