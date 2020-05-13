@@ -6,7 +6,7 @@ lift_sim_A : lift_sim_A.o fileIO.o
 	gcc lift_sim_A.o fileIO.o -lpthread -o lift_sim_A
 
 lift_sim_B : lift_sim_B.o fileIO.o
-	gcc lift_sim_B.o fileIO.o -o lift_sim_B -lrt
+	gcc lift_sim_B.o fileIO.o -lrt -lpthread -o lift_sim_B
 
 lift_sim_A.o : lift_sim_A.c lift_sim_A.h structs.h fileIO.h
 	gcc -c lift_sim_A.c $(CFLAGS)
