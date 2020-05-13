@@ -44,7 +44,7 @@ int main(void)
     fd2 = shm_open("/liftarray", O_CREAT | O_EXCL | O_RDWR, 0600);
 
     ftruncate(fd, 10*sizeof(buffer));
-    ftruncate(fd, 3*sizeof(lifts));
+    ftruncate(fd2, 3*sizeof(lifts));
 
     liftRequests = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
