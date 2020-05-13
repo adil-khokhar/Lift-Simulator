@@ -147,6 +147,7 @@ void request()
         {
             printf("About to enter reading semaphore\n");
             sem_wait(empty);
+            printf("About to enter reading semaphore lock\n");
             sem_wait(mutex);
 
             printf("Reading Semaphore\n");
@@ -174,6 +175,7 @@ void lift(int i)
     {
         printf("Pre-Semaphore %s\n",liftArray[i].name);
         sem_wait(full);
+        printf("Pre-Semaphore lock %s\n",liftArray[i].name);
         sem_wait(mutex);
 
         printf("%s entered semaphore\n",liftArray[i].name);
