@@ -106,9 +106,9 @@ void initialise()
     full = sem_open("/full", O_CREAT|O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT|O_EXCL, 0644, 10);
 
-    strcpy(liftArray[0].name, "Lift-1");
+    /*strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
-    strcpy(liftArray[2].name, "Lift-3");
+    strcpy(liftArray[2].name, "Lift-3");*/
 
     for(jj = 0; jj < 3; jj++)
     {
