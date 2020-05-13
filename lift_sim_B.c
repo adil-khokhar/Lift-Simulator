@@ -43,11 +43,11 @@ int main(void)
     fd = shm_open("/liftbuffer", O_CREAT | O_EXCL | O_RDWR, 0600);
     fd2 = shm_open("/liftarray", O_CREAT | O_EXCL | O_RDWR, 0600);
 
-    ftruncate(fd, 10*sizeof(buffer));
-    ftruncate(fd2, 3*sizeof(lifts));
+    ftruncate(fd, 11*sizeof(buffer));
+    ftruncate(fd2, 4*sizeof(lifts));
 
-    liftRequests = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
+    liftRequests = (buffer*)mmap(0, 11*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    liftArray = (lifts*)mmap(0, 4*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
 
     initialise();
     openFiles();
