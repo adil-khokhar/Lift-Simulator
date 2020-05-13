@@ -146,12 +146,14 @@ void request()
             sem_wait(empty);
             sem_wait(mutex);
 
-            printf("Reading File\n");
+            printf("Reading Semaphore\n");
             liftBuffer[in].source = readPointer[0];
             liftBuffer[in].destination = readPointer[1];
             requestNo++;
             writeBuffer(&liftBuffer[in], requestNo);
             in = (in+1)%10;
+
+            printf("Exiting Reading Semaphore\n");
 
             sem_post(mutex);
             sem_post(full);
@@ -170,6 +172,8 @@ void lift(int i)
         printf("Pre-Semaphore %s\n",liftArray[i].name);
         sem_wait(full);
         sem_wait(mutex);
+
+        printf("%s entered semaphore\n",liftArray[i].name);
 
         if(in != out)
         {
@@ -191,6 +195,8 @@ void lift(int i)
 
         sem_post(mutex);
         sem_post(empty);
+
+        printf("%s exited semaphore\n",liftArray[i].name);
     }
 
     sem_close(mutex);
