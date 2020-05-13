@@ -83,10 +83,10 @@ int main(void)
     closeFiles();
 
     munmap(liftBuffer, 3*sizeof(buffer));
-    close(fd);
+    close(bufferFd);
 
     munmap(liftArray, 10*sizeof(lifts));
-    close(fd2);
+    close(arrayFd);
 
     shm_unlink("/liftbuffer");
     shm_unlink("/liftarray");
