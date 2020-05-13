@@ -175,23 +175,20 @@ void lift(int i)
 
         printf("%s entered semaphore\n",liftArray[i].name);
 
-        if(in != out)
-        {
-            sleep(1);
+        sleep(1);
 
-            printf("Attempting %s\n",liftArray[i].name);
-            liftArray[i].source = liftBuffer[out].source;
-            liftArray[i].destination = liftBuffer[out].destination;
-            liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
-            liftArray[i].totalMovement += liftArray[i].movement;
-            liftArray[i].totalRequests++;
+        printf("Attempting %s\n",liftArray[i].name);
+        liftArray[i].source = liftBuffer[out].source;
+        liftArray[i].destination = liftBuffer[out].destination;
+        liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
+        liftArray[i].totalMovement += liftArray[i].movement;
+        liftArray[i].totalRequests++;
 
-            writeLift(&liftArray[i]);
+        writeLift(&liftArray[i]);
 
-            liftArray[i].prevRequest = liftArray[i].destination;
+        liftArray[i].prevRequest = liftArray[i].destination;
 
-            out = (out+1)%10;
-        }
+        out = (out+1)%10;
 
         sem_post(mutex);
         sem_post(empty);
