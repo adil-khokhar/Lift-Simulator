@@ -44,8 +44,8 @@ int main(void)
     ftruncate(fd, 10*sizeof(buffer));
     ftruncate(fd, 3*sizeof(lifts));
 
-    *liftRequests = (buffer *)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    *liftArray = (lifts *)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
+    liftRequests = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
 
     initialise();
     openFiles();
