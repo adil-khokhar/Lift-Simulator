@@ -37,7 +37,7 @@ int main(void)
     int fd;
     int fd2;
     pid_t lift_R;
-    pid_t lifts[3];
+    pid_t lift_processes[3];
     int jj;
 
     fd = shm_open("/liftbuffer", O_CREAT | O_EXCL | O_RDWR, 0600);
@@ -62,9 +62,9 @@ int main(void)
 
     for(jj = 0; jj < 3; jj++)
     {
-        lifts[jj] = fork();
+        lift_processes[jj] = fork();
 
-        if(lifts[jj] == 0)
+        if(lift_processes[jj] == 0)
         {
             lift(jj);
             exit(0);
@@ -75,7 +75,7 @@ int main(void)
 
     for(jj = 0; jj<3; jj++)
     {
-        waitpid(lifts[jj], NULL, 0);
+        waitpid(lift_processes[jj], NULL, 0);
     }
 
 
