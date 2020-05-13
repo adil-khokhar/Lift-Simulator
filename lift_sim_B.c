@@ -135,8 +135,8 @@ void request()
     {
         readPointer = readNextValue(reading);
 
-        printf("Reading value from file")
-        
+        printf("Reading value from file\n");
+
         if(readPointer[0] == 66)
         {
             finished = 1;
