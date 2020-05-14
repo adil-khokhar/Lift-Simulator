@@ -170,10 +170,10 @@ void request()
             sem_wait(mutex);
 
             printf("Reading Semaphore\n");
-            liftBuffer[in].source = readPointer[0];
-            liftBuffer[in].destination = readPointer[1];
+            liftBuffer[*in].source = readPointer[0];
+            liftBuffer[*in].destination = readPointer[1];
             requestNo++;
-            writeBuffer(&liftBuffer[in], requestNo);
+            writeBuffer(&liftBuffer[*in], requestNo);
             *in = (*in+1)%10;
 
             printf("Exiting Reading Semaphore\n");
