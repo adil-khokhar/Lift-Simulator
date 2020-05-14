@@ -105,11 +105,6 @@ int main(void)
     shm_unlink("/int");
     shm_unlink("/out");
 
-    sem_unlink("/mutex");
-    sem_unlink("/full");
-    sem_unlink("/empty");
-    sem_unlink("/fileOut");
-
     return 0;
 }
 
@@ -117,12 +112,15 @@ void initialise()
 {
     int jj;
 
-    mutex = sem_open("/mutex", O_CREAT | O_EXCL, 0644, 1);
-    full = sem_open("/full", O_CREAT | O_EXCL, 0644, 0);
-    empty = sem_open("/empty", O_CREAT | O_EXCL, 0644, 10);
+    mutex = sem_open("/mutex", O_CREAT | O_EXCL, 0, 1);
+    full = sem_open("/full", O_CREAT | O_EXCL, 0, 0);
+    empty = sem_open("/empty", O_CREAT | O_EXCL, 0, 10);
+    fileOut = sem_open("/fileOut", O_CREAT | O_EXCL, 0, 1);
 
-    fileOut = sem_open("/fileOut", O_CREAT | O_EXCL, 0644, 1);
-
+    sem_unlink("/mutex");
+    sem_unlink("/full");
+    sem_unlink("/empty");
+    sem_unlink("/fileOut");
 
     strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
