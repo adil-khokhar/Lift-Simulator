@@ -20,6 +20,8 @@ sem_t *mutex;
 sem_t *empty;
 sem_t *full;
 
+sem_t *fileOut;
+
 buffer* liftBuffer;
 lifts* liftArray;
 int* in;
@@ -106,6 +108,7 @@ int main(void)
     sem_unlink("/mutex");
     sem_unlink("/full");
     sem_unlink("/empty");
+    sem_unlink("/fileOut");
 
     return 0;
 }
@@ -117,6 +120,8 @@ void initialise()
     mutex = sem_open("/mutex", O_CREAT | O_EXCL, 0644, 1);
     full = sem_open("/full", O_CREAT | O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT | O_EXCL, 0644, 10);
+
+    fileOut = sem_open("/fileOut", O_CREAT | O_EXCL, 0644, 1);
 
 
     strcpy(liftArray[0].name, "Lift-1");
@@ -147,9 +152,6 @@ void request()
     {
         readPointer = readNextValue(reading);
 
-        printf("Reading value from file\n");
-        printf("Source = %d Destination = %d\n",readPointer[0], readPointer[1]);
-
         if(readPointer[0] == 66)
         {
             finished = 1;
@@ -162,25 +164,23 @@ void request()
 
         else
         {
-            printf("About to enter reading semaphore\n");
             sem_getvalue(empty, &value);
-            printf("Value of Reading Semaphore before is %d\n",value);
             sem_wait(empty);
-            printf("About to enter reading semaphore lock\n");
             sem_wait(mutex);
-            printf("MUTEX LOCKED\n");
+            printf("REQUEST MUTEX LOCKED\n");
 
-            printf("Reading Semaphore\n");
             liftBuffer[*in].source = readPointer[0];
             liftBuffer[*in].destination = readPointer[1];
             requestNo++;
+            sem_wait(fileOut);
+            printf("LIFT MUTEX UNLOCKED\n");
             writeBuffer(&liftBuffer[*in], requestNo);
+            printf("FILE MUTEX LOCKED\n");
+            sem_post(fileOut);
             *in = (*in+1)%10;
 
-            printf("Exiting Reading Semaphore\n");
-
+            printf("REQUEST MUTEX UNLOCKED\n");
             sem_post(mutex);
-            printf("MUTEX UNLOCKED\n");
             sem_post(full);
         }
     }
@@ -194,37 +194,34 @@ void lift(int i)
 {
     while(liftArray[i].finished == 0)
     {
-        printf("Pre-Semaphore %s\n",liftArray[i].name);
         sem_wait(full);
-        printf("Pre-Semaphore lock %s\n",liftArray[i].name);
         sem_wait(mutex);
-        printf("MUTEX LOCKED\n");
-
-        printf("%s entered semaphore\n",liftArray[i].name);
+        printf("LIFT MUTEX LOCKED\n");
 
         if(liftArray[i].finished == 0)
         {
             sleep(1);
 
-            printf("Attempting %s\n",liftArray[i].name);
             liftArray[i].source = liftBuffer[*out].source;
             liftArray[i].destination = liftBuffer[*out].destination;
             liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
+            sem_wait(fileOut);
+            printf("FILE MUTEX LOCKED\n");
             writeLift(&liftArray[i]);
+            printf("FILE MUTEX UNLOCKED\n");
+            sem_post(fileOut);
 
             liftArray[i].prevRequest = liftArray[i].destination;
 
             *out = (*out+1)%10;
         }
 
+        printf("LIFT MUTEX UNLOCKED\n");
         sem_post(mutex);
-        printf("MUTEX UNLOCKED\n");
         sem_post(empty);
-
-        printf("%s exited semaphore\n",liftArray[i].name);
     }
 
     sem_close(mutex);
