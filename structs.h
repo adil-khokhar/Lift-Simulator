@@ -13,6 +13,7 @@ typedef struct {
     int movement;
     int totalMovement;
     int totalRequests;
+    int finished;
     char name[6];
 } lifts;
 

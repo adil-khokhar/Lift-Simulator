@@ -23,13 +23,6 @@ sem_t *full;
 buffer* liftBuffer;
 lifts* liftArray;
 
-int finished;
-int finishLift;
-int in;
-int out;
-int isFull;
-int isEmpty;
-
 int requestNo;
 
 int main(void)
@@ -101,7 +94,7 @@ int main(void)
 void initialise()
 {
     int jj;
-    
+
     mutex = sem_open("/mutex", O_CREAT | O_EXCL, 0644, 1);
     full = sem_open("/full", O_CREAT | O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT | O_EXCL, 0644, 10);
@@ -116,15 +109,8 @@ void initialise()
         liftArray[jj].prevRequest = 1;
         liftArray[jj].totalMovement = 0;
         liftArray[jj].totalRequests = 0;
+        liftArray[jj].finished = 0;
     }
-
-    in = 0;
-    out = 0;
-    finished = 0;
-    requestNo = 0;
-    isFull = 0;
-    isEmpty = 0;
-    finishLift = 0;
 }
 
 void request()
@@ -132,6 +118,11 @@ void request()
     int reading[2];
     int* readPointer;
     int value;
+    int finished;
+    int requestNo;
+
+    finished = 0;
+    requestNo = 0;
 
     while(finished == 0)
     {
@@ -144,6 +135,10 @@ void request()
         {
             finished = 1;
             printf("END OF FILE\n");
+
+            liftArray[0].finished = 1;
+            liftArray[1].finished = 1;
+            liftArray[2].finished = 1;
         }
 
         else
@@ -177,7 +172,7 @@ void request()
 
 void lift(int i)
 {
-    while(finished == 0)
+    while(liftArray[i].finished == 0)
     {
         printf("Pre-Semaphore %s\n",liftArray[i].name);
         sem_wait(full);
