@@ -166,6 +166,7 @@ void request()
             printf("Exiting Reading Semaphore\n");
 
             sem_post(mutex);
+            printf("UNLOCKING READING\n");
             sem_post(full);
         }
     }
