@@ -83,7 +83,7 @@ int main(void)
     }
 
 
-    writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), requestNo);
+    writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), (liftArray[0].totalRequests+liftArray[1].totalRequests+liftArray[2].totalRequests));
     closeFiles();
 
     munmap(liftBuffer, 3*sizeof(buffer));
