@@ -22,6 +22,8 @@ sem_t *full;
 
 buffer* liftBuffer;
 lifts* liftArray;
+int* in;
+int* out;
 
 int requestNo;
 
@@ -29,6 +31,8 @@ int main(void)
 {
     int bufferFd;
     int arrayFd;
+    int inFd;
+    int outFd;
     pid_t lift_R;
     pid_t lift_processes[3];
     int jj;
@@ -36,11 +40,18 @@ int main(void)
     bufferFd = shm_open("/liftbuffer", O_CREAT | O_RDWR, 0666);
     ftruncate(bufferFd, 10*sizeof(buffer));
     liftBuffer = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, bufferFd, 0);
-    liftBuffer[0].source = 0;
 
     arrayFd = shm_open("/liftarray", O_CREAT | O_RDWR, 0666);
     ftruncate(arrayFd, 3*sizeof(lifts));
     liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, arrayFd, 0);
+
+    inFd = shm_open("/in", O_CREAT | O_RDWR, 0666);
+    ftruncate(inFd, sizeof(int));
+    in = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, inFd, 0);
+
+    outFd = shm_open("/out", O_CREAT | O_RDWR, 0666);
+    ftruncate(outFd, sizeof(int));
+    out = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, outFd, 0);
 
     initialise();
     openFiles();
@@ -81,8 +92,16 @@ int main(void)
     munmap(liftArray, 10*sizeof(lifts));
     close(arrayFd);
 
+    munmap(in, sizeof(int));
+    close(inFd);
+
+    munmap(out, sizeof(int));
+    close(outFd);
+
     shm_unlink("/liftbuffer");
     shm_unlink("/liftarray");
+    shm_unlink("/int");
+    shm_unlink("/out");
 
     sem_unlink("/mutex");
     sem_unlink("/full");
