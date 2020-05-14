@@ -174,7 +174,7 @@ void request()
             liftBuffer[in].destination = readPointer[1];
             requestNo++;
             writeBuffer(&liftBuffer[in], requestNo);
-            in = (in+1)%10;
+            *in = (*in+1)%10;
 
             printf("Exiting Reading Semaphore\n");
 
@@ -203,8 +203,8 @@ void lift(int i)
         sleep(1);
 
         printf("Attempting %s\n",liftArray[i].name);
-        liftArray[i].source = liftBuffer[out].source;
-        liftArray[i].destination = liftBuffer[out].destination;
+        liftArray[i].source = liftBuffer[*out].source;
+        liftArray[i].destination = liftBuffer[*out].destination;
         liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
         liftArray[i].totalMovement += liftArray[i].movement;
         liftArray[i].totalRequests++;
@@ -213,7 +213,7 @@ void lift(int i)
 
         liftArray[i].prevRequest = liftArray[i].destination;
 
-        out = (out+1)%10;
+        *out = (*out+1)%10;
 
         sem_post(mutex);
         sem_post(empty);
