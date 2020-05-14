@@ -22,6 +22,8 @@ void openFiles()
     {
         printf("Could not open file\n");
     }
+
+    fclose(fileOutput);
 }
 
 int* readNextValue(int* reading)
@@ -40,15 +42,18 @@ int* readNextValue(int* reading)
 
 void writeBuffer(buffer* buffer, int requestNo)
 {
+    fileOutput = fopen("sim_output", "a");
     fprintf(fileOutput, "--------------------------------\n");
     fprintf(fileOutput, "New Lift Request From Floor %d to %d\n", buffer->source, buffer->destination);
     fprintf(fileOutput, "Request No: %d\n", requestNo);
     fprintf(fileOutput, "--------------------------------\n");
     fprintf(fileOutput, "\n");
+    fclose(fileOutput);
 }
 
 void writeLift(lifts* lift)
 {
+    fileOutput = fopen("sim_output", "a");
     fprintf(fileOutput, "%s Operation\n", lift->name);
     fprintf(fileOutput, "Previous Position: Floor %d\n", lift->prevRequest);
     fprintf(fileOutput, "Request: Floor %d to %d\n", lift->source, lift->destination);
@@ -60,18 +65,20 @@ void writeLift(lifts* lift)
     fprintf(fileOutput, "   Total #movement: %d\n", lift->totalMovement);
     fprintf(fileOutput, "Current position: Floor %d\n", lift->destination);
     fprintf(fileOutput, "\n");
+    fclose(fileOutput);
 }
 
 void writeResult(int movement, int requests)
 {
+    fileOutput = fopen("sim_output", "a");
     fprintf(fileOutput, "--------------------------------\n");
     fprintf(fileOutput, "Total Number of Requests: %d\n", requests);
     fprintf(fileOutput, "Total Number of Movements: %d\n", movement);
     fprintf(fileOutput, "--------------------------------\n");
+    fclose(fileOutput);
 }
 
 void closeFiles()
 {
     fclose(fileInput);
-    fclose(fileOutput);
 }
