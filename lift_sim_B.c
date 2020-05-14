@@ -103,12 +103,10 @@ void initialise()
     int jj;
     int value;
 
-    mutex = sem_open("/mutex", O_CREAT, 0666, 1);
-    full = sem_open("/full", O_CREAT, 0666, 0);
+    mutex = sem_open("/mutex", O_CREAT | O_EXCL, 0644, 1);
+    full = sem_open("/full", O_CREAT | O_EXCL, 0644, 0);
     empty = sem_open("/empty", O_CREAT | O_EXCL, 0644, 10);
 
-    sem_getvalue(empty, &value);
-    printf("Value of wait Semaphore after creating is %d\n",value);
 
     strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
