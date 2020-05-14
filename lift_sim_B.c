@@ -188,6 +188,7 @@ void request()
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
+    sem_close(fileOut);
 }
 
 void lift(int i)
@@ -227,6 +228,7 @@ void lift(int i)
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
+    sem_close(fileOut);
 
     printf("%s ending\n", liftArray[i].name);
 }
