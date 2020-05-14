@@ -168,7 +168,7 @@ void request()
             sem_wait(empty);
             printf("About to enter reading semaphore lock\n");
             sem_wait(mutex);
-            printf("MUTEX UNLOCKED\n");
+            printf("MUTEX LOCKED\n");
 
             printf("Reading Semaphore\n");
             liftBuffer[*in].source = readPointer[0];
