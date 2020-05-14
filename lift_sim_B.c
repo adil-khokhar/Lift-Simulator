@@ -168,6 +168,7 @@ void request()
             sem_wait(empty);
             printf("About to enter reading semaphore lock\n");
             sem_wait(mutex);
+            printf("MUTEX UNLOCKED\n");
 
             printf("Reading Semaphore\n");
             liftBuffer[*in].source = readPointer[0];
@@ -179,7 +180,7 @@ void request()
             printf("Exiting Reading Semaphore\n");
 
             sem_post(mutex);
-            printf("UNLOCKING READING\n");
+            printf("MUTEX UNLOCKED\n");
             sem_post(full);
         }
     }
@@ -197,6 +198,7 @@ void lift(int i)
         sem_wait(full);
         printf("Pre-Semaphore lock %s\n",liftArray[i].name);
         sem_wait(mutex);
+        printf("MUTEX LOCKED\n");
 
         printf("%s entered semaphore\n",liftArray[i].name);
 
@@ -219,6 +221,7 @@ void lift(int i)
         }
 
         sem_post(mutex);
+        printf("MUTEX UNLOCKED\n");
         sem_post(empty);
 
         printf("%s exited semaphore\n",liftArray[i].name);
