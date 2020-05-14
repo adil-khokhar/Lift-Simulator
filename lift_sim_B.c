@@ -173,9 +173,9 @@ void request()
             liftBuffer[*in].destination = readPointer[1];
             requestNo++;
             sem_wait(fileOut);
-            printf("LIFT MUTEX UNLOCKED\n");
-            writeBuffer(&liftBuffer[*in], requestNo);
             printf("FILE MUTEX LOCKED\n");
+            writeBuffer(&liftBuffer[*in], requestNo);
+            printf("FILE MUTEX UNLOCKED\n");
             sem_post(fileOut);
             *in = (*in+1)%10;
 
