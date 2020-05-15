@@ -40,11 +40,11 @@ int* readNextValue(int* reading)
     return reading;
 }
 
-void writeBuffer(buffer* buffer, int requestNo)
+void writeBuffer(int source, int destination, int requestNo)
 {
     fileOutput = fopen("sim_output", "a");
     fprintf(fileOutput, "--------------------------------\n");
-    fprintf(fileOutput, "New Lift Request From Floor %d to %d\n", buffer->source, buffer->destination);
+    fprintf(fileOutput, "New Lift Request From Floor %d to %d\n", source, destination);
     fprintf(fileOutput, "Request No: %d\n", requestNo);
     fprintf(fileOutput, "--------------------------------\n");
     fprintf(fileOutput, "\n");

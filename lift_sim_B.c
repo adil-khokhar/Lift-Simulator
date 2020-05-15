@@ -176,7 +176,7 @@ void request()
 
             sem_wait(fileOut);
             printf("FILE MUTEX LOCKED\n");
-            writeBuffer(&liftBuffer[*in], requestNo);
+            writeBuffer(readPointer[0], readPointer[1], requestNo);
             printf("FILE MUTEX UNLOCKED\n");
             sem_post(fileOut);
         }
