@@ -217,7 +217,7 @@ void lift(int i)
             *out = (*out+1)%10;
         }
 
-        printf("%s MUTEX UNLOCKED\n");
+        printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
         sem_post(mutex);
         sem_post(empty);
     }
