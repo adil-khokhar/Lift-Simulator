@@ -162,7 +162,6 @@ void request()
 
         else
         {
-            sem_getvalue(empty, &value);
             sem_wait(empty);
             sem_wait(mutex);
             printf("REQUEST MUTEX LOCKED\n");
@@ -170,16 +169,17 @@ void request()
             liftBuffer[*in].source = readPointer[0];
             liftBuffer[*in].destination = readPointer[1];
             requestNo++;
-            sem_wait(fileOut);
-            printf("FILE MUTEX LOCKED\n");
-            writeBuffer(&liftBuffer[*in], requestNo);
-            printf("FILE MUTEX UNLOCKED\n");
-            sem_post(fileOut);
             *in = (*in+1)%10;
 
             printf("REQUEST MUTEX UNLOCKED\n");
             sem_post(mutex);
             sem_post(full);
+
+            sem_wait(fileOut);
+            printf("FILE MUTEX LOCKED\n");
+            writeBuffer(&liftBuffer[*in], requestNo);
+            printf("FILE MUTEX UNLOCKED\n");
+            sem_post(fileOut);
         }
     }
 
