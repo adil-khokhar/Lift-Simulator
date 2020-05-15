@@ -139,7 +139,6 @@ void request()
 {
     int reading[2];
     int* readPointer;
-    int value;
     int finished;
     int requestNo;
 
