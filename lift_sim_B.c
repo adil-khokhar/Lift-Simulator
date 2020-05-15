@@ -222,6 +222,8 @@ void lift(int i)
         sem_post(empty);
     }
 
+    printf("%s pre-ending\n", liftArray[i].name);
+
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
