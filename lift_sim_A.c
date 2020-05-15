@@ -172,7 +172,7 @@ void *request(void *param)
             liftRequests[in].source = readPointer[0];
             liftRequests[in].destination = readPointer[1];
             requestNo++;
-            writeBuffer(&liftRequests[in], requestNo);
+            writeBuffer(readPointer[0],readPointer[1], requestNo);
             printf("Written buffer\n");
             in = (in+1)%bufferSize;
         }
