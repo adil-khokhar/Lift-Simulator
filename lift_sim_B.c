@@ -157,6 +157,10 @@ void request()
             liftArray[0].finished = 1;
             liftArray[1].finished = 1;
             liftArray[2].finished = 1;
+
+            sem_post(full);
+            sem_post(full);
+            sem_post(full);
         }
 
         else
@@ -192,13 +196,12 @@ void lift(int i)
 {
     while(liftArray[i].finished == 0)
     {
+        sem_wait(full);
+        sem_wait(mutex);
+        printf("%s MUTEX LOCKED\n", liftArray[i].name);
+
         if(liftArray[i].finished == 0)
         {
-
-            sem_wait(full);
-            sem_wait(mutex);
-            printf("%s MUTEX LOCKED\n", liftArray[i].name);
-
             sleep(1);
 
             liftArray[i].source = liftBuffer[*out].source;
@@ -216,11 +219,11 @@ void lift(int i)
             liftArray[i].prevRequest = liftArray[i].destination;
 
             *out = (*out+1)%10;
-
-            printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
-            sem_post(mutex);
-            sem_post(empty);
         }
+
+        printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
+        sem_post(mutex);
+        sem_post(empty);
     }
 
     printf("%s pre-ending\n", liftArray[i].name);
