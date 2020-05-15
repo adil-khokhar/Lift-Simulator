@@ -133,6 +133,9 @@ void initialise()
         liftArray[jj].totalRequests = 0;
         liftArray[jj].finished = 0;
     }
+
+    *in = 0;
+    *out = 0;
 }
 
 void request()
