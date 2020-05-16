@@ -21,7 +21,7 @@ fileIO.o : fileIO.c fileIO.h structs.h
 	gcc -c fileIO.c $(CFLAGS)
 
 gen_sim_input.o : gen_sim_input.c
-	gcc -c gen_sim_input $(CFLAGS)
+	gcc -c gen_sim_input.c $(CFLAGS)
 
 clean :
 	rm -f lift_sim_A lift_sim_A.o lift_sim_B lift_sim_B.o fileIO.o gen_sim_input gen_sem_input.o
