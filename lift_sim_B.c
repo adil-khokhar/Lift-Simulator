@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 
             if(lift_R == 0)
             {
+                printf("Lift-R Process Created and Running ...\n");
                 request(bufferSize);
                 exit(0);
             }
@@ -89,6 +90,7 @@ int main(int argc, char *argv[])
 
                 if(lift_processes[jj] == 0)
                 {
+                    printf("%s Process Created and Running ...\n", *liftArray[jj].name);
                     lift(jj, bufferSize, sleepTime);
                     exit(0);
                 }
@@ -183,7 +185,6 @@ void request(int bufferSize)
         if(readPointer[0] == 66)
         {
             finished = 1;
-            printf("END OF FILE\n");
 
             liftArray[0].finished = 1;
             liftArray[1].finished = 1;
@@ -198,24 +199,22 @@ void request(int bufferSize)
         {
             sem_wait(empty);
             sem_wait(mutex);
-            printf("REQUEST MUTEX LOCKED\n");
 
             liftBuffer[*in].source = readPointer[0];
             liftBuffer[*in].destination = readPointer[1];
             requestNo++;
             *in = (*in+1)%bufferSize;
 
-            printf("REQUEST MUTEX UNLOCKED\n");
             sem_post(mutex);
             sem_post(full);
 
             sem_wait(fileOut);
-            printf("FILE MUTEX LOCKED\n");
             writeBuffer(readPointer[0], readPointer[1], requestNo);
-            printf("FILE MUTEX UNLOCKED\n");
             sem_post(fileOut);
         }
     }
+
+    printf("Lift-R Process Finished ...\n");
 
     sem_close(mutex);
     sem_close(full);
@@ -233,7 +232,6 @@ void lift(int i, int bufferSize, int sleepTime)
     {
         sem_wait(full);
         sem_wait(mutex);
-        printf("%s MUTEX LOCKED\n", liftArray[i].name);
 
         if((liftArray[i].finished == 0) || (*in != *out))
         {
@@ -245,9 +243,7 @@ void lift(int i, int bufferSize, int sleepTime)
             liftArray[i].totalRequests++;
 
             sem_wait(fileOut);
-            printf("%s FILE MUTEX LOCKED\n", liftArray[i].name);
             writeLift(&liftArray[i]);
-            printf("%s FILE MUTEX UNLOCKED\n", liftArray[i].name);
             sem_post(fileOut);
 
             liftArray[i].prevRequest = liftArray[i].destination;
@@ -260,19 +256,16 @@ void lift(int i, int bufferSize, int sleepTime)
             finishLift = 1;
         }
 
-        printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
         sem_post(mutex);
         sem_post(empty);
 
         sleep(sleepTime);
     }
 
-    printf("%s pre-ending\n", liftArray[i].name);
+    printf("%s Process Finished ...\n", *liftArray[jj].name);
 
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
     sem_close(fileOut);
-
-    printf("%s ending\n", liftArray[i].name);
 }

@@ -62,10 +62,20 @@ int main(int argc, char *argv[])
                 printf("Can't create Lift R\n");
             }
 
+            else
+            {
+                printf("Lift-R Thread Created and Running ...\n");
+            }
+
             *arg1 = 0;
             if(pthread_create(&lift_1, NULL, lift, arg1) == -1)
             {
                 printf("Can't create Lift 1\n");
+            }
+
+            else
+            {
+                printf("Lift-1 Thread Created and Running ...\n");
             }
 
             *arg2 = 1;
@@ -74,10 +84,20 @@ int main(int argc, char *argv[])
                 printf("Can't create Lift 2\n");
             }
 
+            else
+            {
+                printf("Lift-2 Thread Created and Running ...\n");
+            }
+
             *arg3 = 2;
             if(pthread_create(&lift_3, NULL, lift, arg3) == -1)
             {
                 printf("Can't create Lift 3\n");
+            }
+
+            else
+            {
+                printf("Lift-3 Thread Created and Running ...\n");
             }
 
             pthread_join(lift_R,NULL);
@@ -155,7 +175,6 @@ void *request(void *param)
 
         while(((in+1)%bufferSize) == out)
         {
-            printf("buffer is full\n");
             pthread_cond_wait(&full, &lock);
         }
 
@@ -164,7 +183,6 @@ void *request(void *param)
         if(readPointer[0] == 66)
         {
             finished = 1;
-            printf("END OF FILE\n");
         }
 
         else
@@ -173,13 +191,14 @@ void *request(void *param)
             liftRequests[in].destination = readPointer[1];
             requestNo++;
             writeBuffer(readPointer[0],readPointer[1], requestNo);
-            printf("Written buffer\n");
             in = (in+1)%bufferSize;
         }
 
         pthread_cond_signal(&empty);
         pthread_mutex_unlock(&lock);
     }
+
+    printf("Lift-R Thread Finished ...\n");
 
     return NULL;
 }
@@ -190,12 +209,10 @@ void *lift(void *param)
 
     while(finishLift == 0)
     {
-        printf("%s about to enter lock\n", liftArray[i].name);
         pthread_mutex_lock(&lock);
 
         while((in == out) && (finished != 1))
         {
-            printf("buffer is empty\n");
             pthread_cond_wait(&empty, &lock);
         }
 
@@ -207,11 +224,7 @@ void *lift(void *param)
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
-            printf("%s before writing\n", liftArray[i].name);
-
             writeLift(&liftArray[i]);
-
-            printf("%s after writing\n", liftArray[i].name);
 
             liftArray[i].prevRequest = liftArray[i].destination;
 
@@ -230,7 +243,7 @@ void *lift(void *param)
         sleep(sleepTime);
     }
 
-    printf("EXITING BECAUSE FINISHED %s\n", liftArray[i].name);
+    printf("%s Thread Finished ...\n", liftArray[i].name);
 
     return NULL;
 }
