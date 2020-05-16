@@ -1,3 +1,9 @@
+/* File: gen_sim_input.c
+ * Author: Adil Khokhar (19182405)
+ * Purpose: Generate random input file for lift simulator
+ * Date Modified: 16/05/2020
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

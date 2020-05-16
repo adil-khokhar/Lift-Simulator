@@ -1,3 +1,9 @@
+/* File: lift_sim_B.c
+ * Author: Adil Khokhar (19182405)
+ * Purpose: Simulate lift requests using Processes, POSIX Semaphores and POSIX Shared Memory
+ * Date Modified: 16/05/2020
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +62,10 @@ int main(int argc, char *argv[])
             bufferSize = atoi(argv[1]) + 1;
             sleepTime = atoi(argv[2]);
 
+            /*
+            * Create Shared Memory for Buffer, Lift Array,
+            * and In and Out (Keep Track of Buffer Element)
+            */
             bufferFd = shm_open("/liftbuffer", O_CREAT | O_RDWR, 0666);
             ftruncate(bufferFd, bufferSize*sizeof(buffer));
             liftBuffer = (buffer*)mmap(0, bufferSize*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, bufferFd, 0);
@@ -72,9 +82,13 @@ int main(int argc, char *argv[])
             ftruncate(outFd, sizeof(int));
             out = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, outFd, 0);
 
+            /* Run function initalise (lift_sim_B.c) */
             initialise();
+            /* Run function openFiles (fileIO.c) */
             openFiles();
 
+
+            /* Create Buffer Producer Child Process */
             lift_R = fork();
 
             if(lift_R == 0)
@@ -84,6 +98,7 @@ int main(int argc, char *argv[])
                 exit(0);
             }
 
+            /* Create Consumer Child Processes */
             for(jj = 0; jj < 3; jj++)
             {
                 lift_processes[jj] = fork();
@@ -96,6 +111,7 @@ int main(int argc, char *argv[])
                 }
             }
 
+            /* Wait for all child processes to finish */
             waitpid(lift_R, NULL, 0);
 
             for(jj = 0; jj<3; jj++)
@@ -103,9 +119,12 @@ int main(int argc, char *argv[])
                 waitpid(lift_processes[jj], NULL, 0);
             }
 
+            /* Run function writeResult (fileIO.c) */
             writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), (liftArray[0].totalRequests+liftArray[1].totalRequests+liftArray[2].totalRequests));
+            /* Run function closeFiles (fileIO.c) */
             closeFiles();
 
+            /* Unmap and Close Shared Memory */
             munmap(liftBuffer, 3*sizeof(buffer));
             close(bufferFd);
 
@@ -123,6 +142,7 @@ int main(int argc, char *argv[])
             shm_unlink("/int");
             shm_unlink("/out");
 
+            /* Close Shared Semaphores */
             sem_close(mutex);
             sem_close(full);
             sem_close(empty);
@@ -142,20 +162,24 @@ void initialise()
 {
     int jj;
 
+    /* Create Shared Named Semaphores */
     mutex = sem_open("/mutex", O_CREAT | O_EXCL, 0, 1);
     full = sem_open("/full", O_CREAT | O_EXCL, 0, 0);
     empty = sem_open("/empty", O_CREAT | O_EXCL, 0, 10);
     fileOut = sem_open("/fileOut", O_CREAT | O_EXCL, 0, 1);
 
+    /* Unlink Shared Named Semaphores */
     sem_unlink("/mutex");
     sem_unlink("/full");
     sem_unlink("/empty");
     sem_unlink("/fileOut");
 
+    /* Add Lift Names to the Structs */
     strcpy(liftArray[0].name, "Lift-1");
     strcpy(liftArray[1].name, "Lift-2");
     strcpy(liftArray[2].name, "Lift-3");
 
+    /* Set initial lift values */
     for(jj = 0; jj < 3; jj++)
     {
         liftArray[jj].prevRequest = 1;
@@ -164,6 +188,7 @@ void initialise()
         liftArray[jj].finished = 0;
     }
 
+    /* Set initial buffer position */
     *in = 0;
     *out = 0;
 }

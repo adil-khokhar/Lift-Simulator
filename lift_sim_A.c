@@ -1,3 +1,9 @@
+/* File: lift_sim_A.c
+ * Author: Adil Khokhar (19182405)
+ * Purpose: Simulate lift requests using Posix Threads
+ * Date Modified: 16/05/2020
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>

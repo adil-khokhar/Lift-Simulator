@@ -1,3 +1,9 @@
+/* File: fileIO.c
+ * Author: Adil Khokhar (19182405)
+ * Purpose: Responible for all File Input/Output for Lift Simulator
+ * Date Modified: 16/05/2020
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
