@@ -201,8 +201,6 @@ void *lift(void *param)
 
         if(in != out)
         {
-            sleep(sleepTime);
-
             liftArray[i].source = liftRequests[out].source;
             liftArray[i].destination = liftRequests[out].destination;
             liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
@@ -228,6 +226,8 @@ void *lift(void *param)
         }
 
         pthread_mutex_unlock(&lock);
+
+        sleep(sleepTime);
     }
 
     printf("EXITING BECAUSE FINISHED %s\n", liftArray[i].name);
