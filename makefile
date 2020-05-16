@@ -9,7 +9,7 @@ lift_sim_B : lift_sim_B.o fileIO.o
 	gcc lift_sim_B.o fileIO.o -lrt -lpthread -pthread -o lift_sim_B
 
 gen_sim_input : gen_sim_input.o
-	gcc gem_sem_input.o -o gen_sim_input
+	gcc gen_sim_input.o -o gen_sim_input
 
 lift_sim_A.o : lift_sim_A.c lift_sim_A.h structs.h fileIO.h
 	gcc -c lift_sim_A.c $(CFLAGS)
