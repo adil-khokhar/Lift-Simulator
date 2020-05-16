@@ -2,7 +2,7 @@
 #define LB_H
 
 void initialise();
-void request();
-void lift(int i, int sleepTime);
+void request(int bufferSize);
+void lift(int i, int bufferSize, int sleepTime);
 
 #endif
