@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
         else
         {
-            bufferSize = atoi(argv[1]);
+            bufferSize = atoi(argv[1]) + 1;
             sleepTime = atoi(argv[2]);
 
             bufferFd = shm_open("/liftbuffer", O_CREAT | O_RDWR, 0666);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
             if(lift_R == 0)
             {
-                request();
+                request(bufferSize);
                 exit(0);
             }
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
                 if(lift_processes[jj] == 0)
                 {
-                    lift(jj, sleepTime);
+                    lift(jj, bufferSize, sleepTime);
                     exit(0);
                 }
             }
@@ -166,7 +166,7 @@ void initialise()
     *out = 0;
 }
 
-void request()
+void request(int bufferSize)
 {
     int reading[2];
     int* readPointer;
@@ -203,7 +203,7 @@ void request()
             liftBuffer[*in].source = readPointer[0];
             liftBuffer[*in].destination = readPointer[1];
             requestNo++;
-            *in = (*in+1)%10;
+            *in = (*in+1)%bufferSize;
 
             printf("REQUEST MUTEX UNLOCKED\n");
             sem_post(mutex);
@@ -223,13 +223,11 @@ void request()
     sem_close(fileOut);
 }
 
-void lift(int i, int sleepTime)
+void lift(int i, int bufferSize, int sleepTime)
 {
     int finishLift;
 
     finishLift = 0;
-
-    printf("SLEEP TIME IS %d",sleepTime);
 
     while(finishLift == 0)
     {
@@ -254,7 +252,7 @@ void lift(int i, int sleepTime)
 
             liftArray[i].prevRequest = liftArray[i].destination;
 
-            *out = (*out+1)%10;
+            *out = (*out+1)%bufferSize;
         }
 
         else
