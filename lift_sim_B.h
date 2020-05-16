@@ -3,6 +3,6 @@
 
 void initialise();
 void request();
-void lift(int i);
+void lift(int i, int sleepTime);
 
 #endif

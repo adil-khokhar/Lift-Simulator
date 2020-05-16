@@ -27,86 +27,111 @@ lifts* liftArray;
 int* in;
 int* out;
 
-int main(void)
+int main(int argc, char *argv[])
 {
     int bufferFd;
     int arrayFd;
     int inFd;
     int outFd;
+    int jj;
+    int bufferSize;
+    int sleepTime;
     pid_t lift_R;
     pid_t lift_processes[3];
-    int jj;
 
-    bufferFd = shm_open("/liftbuffer", O_CREAT | O_RDWR, 0666);
-    ftruncate(bufferFd, 10*sizeof(buffer));
-    liftBuffer = (buffer*)mmap(0, 10*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, bufferFd, 0);
-
-    arrayFd = shm_open("/liftarray", O_CREAT | O_RDWR, 0666);
-    ftruncate(arrayFd, 3*sizeof(lifts));
-    liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, arrayFd, 0);
-
-    inFd = shm_open("/in", O_CREAT | O_RDWR, 0666);
-    ftruncate(inFd, sizeof(int));
-    in = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, inFd, 0);
-
-    outFd = shm_open("/out", O_CREAT | O_RDWR, 0666);
-    ftruncate(outFd, sizeof(int));
-    out = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, outFd, 0);
-
-    initialise();
-    openFiles();
-
-    lift_R = fork();
-
-    if(lift_R == 0)
+    if(argc == 3)
     {
-        request();
-        exit(0);
-    }
-
-    for(jj = 0; jj < 3; jj++)
-    {
-        lift_processes[jj] = fork();
-
-        if(lift_processes[jj] == 0)
+        if(atoi(argv[1]) < 1)
         {
-            lift(jj);
-            exit(0);
+            printf("Error! Buffer Size has to be greater than or equal to 1!\n");
+        }
+
+        else if(atoi(argv[2]) < 0)
+        {
+            printf("Error! Time has to be greater than or equal to 0!\n");
+        }
+
+        else
+        {
+            bufferSize = atoi(argv[1]);
+            sleepTime = atoi(argv[2]);
+
+            bufferFd = shm_open("/liftbuffer", O_CREAT | O_RDWR, 0666);
+            ftruncate(bufferFd, bufferSize*sizeof(buffer));
+            liftBuffer = (buffer*)mmap(0, bufferSize*sizeof(buffer), PROT_READ | PROT_WRITE, MAP_SHARED, bufferFd, 0);
+
+            arrayFd = shm_open("/liftarray", O_CREAT | O_RDWR, 0666);
+            ftruncate(arrayFd, 3*sizeof(lifts));
+            liftArray = (lifts*)mmap(0, 3*sizeof(lifts), PROT_READ | PROT_WRITE, MAP_SHARED, arrayFd, 0);
+
+            inFd = shm_open("/in", O_CREAT | O_RDWR, 0666);
+            ftruncate(inFd, sizeof(int));
+            in = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, inFd, 0);
+
+            outFd = shm_open("/out", O_CREAT | O_RDWR, 0666);
+            ftruncate(outFd, sizeof(int));
+            out = (int*)mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, outFd, 0);
+
+            initialise();
+            openFiles();
+
+            lift_R = fork();
+
+            if(lift_R == 0)
+            {
+                request();
+                exit(0);
+            }
+
+            for(jj = 0; jj < 3; jj++)
+            {
+                lift_processes[jj] = fork();
+
+                if(lift_processes[jj] == 0)
+                {
+                    lift(jj, sleepTime);
+                    exit(0);
+                }
+            }
+
+            waitpid(lift_R, NULL, 0);
+
+            for(jj = 0; jj<3; jj++)
+            {
+                waitpid(lift_processes[jj], NULL, 0);
+            }
+
+            writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), (liftArray[0].totalRequests+liftArray[1].totalRequests+liftArray[2].totalRequests));
+            closeFiles();
+
+            munmap(liftBuffer, 3*sizeof(buffer));
+            close(bufferFd);
+
+            munmap(liftArray, bufferSize*sizeof(lifts));
+            close(arrayFd);
+
+            munmap(in, sizeof(int));
+            close(inFd);
+
+            munmap(out, sizeof(int));
+            close(outFd);
+
+            shm_unlink("/liftbuffer");
+            shm_unlink("/liftarray");
+            shm_unlink("/int");
+            shm_unlink("/out");
+
+            sem_close(mutex);
+            sem_close(full);
+            sem_close(empty);
+            sem_close(fileOut);
         }
     }
 
-    waitpid(lift_R, NULL, 0);
-
-    for(jj = 0; jj<3; jj++)
+    else
     {
-        waitpid(lift_processes[jj], NULL, 0);
+        printf("Error! Incorrect Number of Arguments!\n");
     }
-
-
-    writeResult((liftArray[0].totalMovement+liftArray[1].totalMovement+liftArray[2].totalMovement), (liftArray[0].totalRequests+liftArray[1].totalRequests+liftArray[2].totalRequests));
-    closeFiles();
-
-    munmap(liftBuffer, 3*sizeof(buffer));
-    close(bufferFd);
-
-    munmap(liftArray, 10*sizeof(lifts));
-    close(arrayFd);
-
-    munmap(in, sizeof(int));
-    close(inFd);
-
-    munmap(out, sizeof(int));
-    close(outFd);
-
-    shm_unlink("/liftbuffer");
-    shm_unlink("/liftarray");
-    shm_unlink("/int");
-    shm_unlink("/out");
-
-    sem_close(mutex);
-    sem_close(full);
-    sem_close(empty);
-    sem_close(fileOut);
 
     return 0;
 }
@@ -198,7 +223,7 @@ void request()
     sem_close(fileOut);
 }
 
-void lift(int i)
+void lift(int i, int sleepTime)
 {
     int finishLift;
 
@@ -239,7 +264,7 @@ void lift(int i)
         sem_post(mutex);
         sem_post(empty);
 
-        sleep(1);
+        sleep(sleepTime);
     }
 
     printf("%s pre-ending\n", liftArray[i].name);
