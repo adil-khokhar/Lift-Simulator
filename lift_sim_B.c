@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 
                 if(lift_processes[jj] == 0)
                 {
-                    printf("%s Process Created and Running ...\n", *liftArray[jj].name);
+                    printf("%s Process Created and Running ...\n", liftArray[jj].name);
                     lift(jj, bufferSize, sleepTime);
                     exit(0);
                 }
@@ -262,7 +262,7 @@ void lift(int i, int bufferSize, int sleepTime)
         sleep(sleepTime);
     }
 
-    printf("%s Process Finished ...\n", *liftArray[jj].name);
+    printf("%s Process Finished ...\n", liftArray[i].name);
 
     sem_close(mutex);
     sem_close(full);
