@@ -195,23 +195,18 @@ void request()
 
 void lift(int i)
 {
-    int exitCond;
+    int finishLift;
 
-    exitCond = 0;
+    finishLift = 0;
 
-    while(exitCond == 0)
+    while(finishLift == 0)
     {
-        if((liftArray[i].finished == 1) && (*in == *out))
-        {
-            exitCond = 1;
-        }
+        sem_wait(full);
+        sem_wait(mutex);
+        printf("%s MUTEX LOCKED\n", liftArray[i].name);
 
-        else
+        if((liftArray[i].finished == 0) || (*in != out))
         {
-            sem_wait(full);
-            sem_wait(mutex);
-            printf("%s MUTEX LOCKED\n", liftArray[i].name);
-
             sleep(1);
 
             liftArray[i].source = liftBuffer[*out].source;
@@ -220,20 +215,25 @@ void lift(int i)
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
-            liftArray[i].prevRequest = liftArray[i].destination;
-
-            *out = (*out+1)%10;
-
-            printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
-            sem_post(mutex);
-            sem_post(empty);
-
             sem_wait(fileOut);
             printf("%s FILE MUTEX LOCKED\n", liftArray[i].name);
             writeLift(&liftArray[i]);
             printf("%s FILE MUTEX UNLOCKED\n", liftArray[i].name);
             sem_post(fileOut);
+
+            liftArray[i].prevRequest = liftArray[i].destination;
+
+            *out = (*out+1)%10;
         }
+
+        else
+        {
+            finishLift = 1;
+        }
+
+        printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
+        sem_post(mutex);
+        sem_post(empty);
     }
 
     printf("%s pre-ending\n", liftArray[i].name);
