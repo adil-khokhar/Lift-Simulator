@@ -229,7 +229,7 @@ void lift(int i, int sleepTime)
 
     finishLift = 0;
 
-    printf("SLEEP TIME IS %d",sleepTime)
+    printf("SLEEP TIME IS %d",sleepTime);
 
     while(finishLift == 0)
     {
