@@ -7,7 +7,7 @@ int main(void)
     FILE *fp;
     int randomNum1, randomNum2;
     int numRequests;
-    int ii
+    int ii;
 
     fp = fopen("sim_input", "w+");
 
