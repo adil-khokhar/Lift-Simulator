@@ -7,6 +7,7 @@ int main(void)
     FILE *fp;
     int randomNum1, randomNum2;
     int numRequests;
+    int ii
 
     fp = fopen("sim_input", "w+");
 
@@ -23,7 +24,7 @@ int main(void)
 
         printf("Num requests = %d\n", numRequests);
 
-        for(int ii = 0; ii < numRequests; ii++)
+        for(ii = 0; ii < numRequests; ii++)
         {
             randomNum1 = (rand() % (20 - 1 + 1)) + 1;
             randomNum2 = (rand() % (20 - 1 + 1)) + 1;
