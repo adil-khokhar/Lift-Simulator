@@ -41,12 +41,12 @@ int main(int argc, char *argv[])
     {
         if(atoi(argv[1]) < 1)
         {
-            printf("Error! Buffer Size has to be greater than or equal to 1!");
+            printf("Error! Buffer Size has to be greater than or equal to 1!\n");
         }
 
         else if(atoi(argv[2]) < 0)
         {
-            printf("Error! Time has to be greater than or equal to 0!");
+            printf("Error! Time has to be greater than or equal to 0!\n");
         }
 
         else
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
     else
     {
-        printf("Error! Incorrect Number of Arguments!");
+        printf("Error! Incorrect Number of Arguments!\n");
     }
 
     free(arg1);

@@ -103,6 +103,11 @@ int main(void)
     shm_unlink("/int");
     shm_unlink("/out");
 
+    sem_close(mutex);
+    sem_close(full);
+    sem_close(empty);
+    sem_close(fileOut);
+
     return 0;
 }
 
@@ -207,7 +212,6 @@ void lift(int i)
 
         if((liftArray[i].finished == 0) || (*in != *out))
         {
-            sleep(1);
 
             liftArray[i].source = liftBuffer[*out].source;
             liftArray[i].destination = liftBuffer[*out].destination;
@@ -234,6 +238,8 @@ void lift(int i)
         printf("%s MUTEX UNLOCKED\n", liftArray[i].name);
         sem_post(mutex);
         sem_post(empty);
+
+        sleep(1);
     }
 
     printf("%s pre-ending\n", liftArray[i].name);
