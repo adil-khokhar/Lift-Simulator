@@ -205,7 +205,7 @@ void lift(int i)
         sem_wait(mutex);
         printf("%s MUTEX LOCKED\n", liftArray[i].name);
 
-        if((liftArray[i].finished == 0) || (*in != out))
+        if((liftArray[i].finished == 0) || (*in != *out))
         {
             sleep(1);
 
