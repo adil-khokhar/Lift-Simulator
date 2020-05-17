@@ -20,6 +20,7 @@
 #include "structs.h"
 #include "fileIO.h"
 
+/* Have to manually define ftruncate function otherwise doesn't work. */
 int ftruncate(int f, off_t length);
 
 sem_t *mutex;
@@ -158,6 +159,10 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/*
+ * Function: initalise
+ * Purpose: Initalise some specific variables for beginning of lift simulator
+ */
 void initialise()
 {
     int jj;
@@ -193,6 +198,10 @@ void initialise()
     *out = 0;
 }
 
+/*
+ * Function: request
+ * Purpose: Producer which adds lift requests to a shared buffer
+ */
 void request(int bufferSize)
 {
     int reading[2];
@@ -200,21 +209,34 @@ void request(int bufferSize)
     int finished;
     int requestNo;
 
+    /* finished is used to indicate when producer should finish once no more
+       requests are available */
     finished = 0;
+
+    /* Keeps track of number of requests added to buffer */
     requestNo = 0;
 
     while(finished == 0)
     {
+        /* Obtain next request from input file using readNextValue (fileIO.c) */
         readPointer = readNextValue(reading);
 
+        /* When requests are exhausted, readNextValue returns a value of 66,
+           which ordinarily is not a possible request */
         if(readPointer[0] == 66)
         {
+            /* Breaks while loop and ends producer */
             finished = 1;
 
+            /* Tells each consumer that no more requests are available */
             liftArray[0].finished = 1;
             liftArray[1].finished = 1;
             liftArray[2].finished = 1;
 
+            /* Used as a redundancy. Sometimes, once requests are finished,
+               the consumer processes may still be waiting for a signal from the
+               producer for more requests. Manually signalling them to continue
+               will avoid this almost-deadlock (Need 3 for each consumer) */
             sem_post(full);
             sem_post(full);
             sem_post(full);
@@ -222,17 +244,23 @@ void request(int bufferSize)
 
         else
         {
+            /* Lock mutex and stop if buffer is currently full */
             sem_wait(empty);
             sem_wait(mutex);
 
+            /* Add new request to buffer and change *in which points to current
+               request index (for FIFO queue) */
             liftBuffer[*in].source = readPointer[0];
             liftBuffer[*in].destination = readPointer[1];
             requestNo++;
             *in = (*in+1)%bufferSize;
 
+            /* Unlock mutex and signal waiting consumers */
             sem_post(mutex);
             sem_post(full);
 
+            /* Lock file mutex and use writeBuffer (fileIO.c) to write new buffer
+               to output file */
             sem_wait(fileOut);
             writeBuffer(readPointer[0], readPointer[1], requestNo);
             sem_post(fileOut);
@@ -241,54 +269,71 @@ void request(int bufferSize)
 
     printf("Lift-R Process Finished ...\n");
 
+    /* Close all semaphores */
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
     sem_close(fileOut);
 }
 
+/*
+ * Function: lift
+ * Purpose: Consumer which serves lift request from shared buffer
+ */
 void lift(int i, int bufferSize, int sleepTime)
 {
     int finishLift;
 
+    /* Variable to indicate when consumer should finish */
     finishLift = 0;
 
     while(finishLift == 0)
     {
+        /* Lock mutex and wait if buffer is empty */
         sem_wait(full);
         sem_wait(mutex);
 
+        /* Check if requests from input file have finished and if buffer is
+           currently empty (Producer may have signalled that buffer is not empty
+           to avoid infinite loop even though buffer is empty */
         if((liftArray[i].finished == 0) || (*in != *out))
         {
-
+            /* Remove request from buffer and server the request */
             liftArray[i].source = liftBuffer[*out].source;
             liftArray[i].destination = liftBuffer[*out].destination;
             liftArray[i].movement = abs(liftArray[i].prevRequest - liftArray[i].source) + abs(liftArray[i].destination - liftArray[i].source);
             liftArray[i].totalMovement += liftArray[i].movement;
             liftArray[i].totalRequests++;
 
+            /* Lock file mutex and write lift request to output using writeLift (fileIO.c) */
             sem_wait(fileOut);
             writeLift(&liftArray[i]);
             sem_post(fileOut);
 
+            /* Make lifts previous request the destination that was just served */
             liftArray[i].prevRequest = liftArray[i].destination;
 
+            /* Change current buffer index */
             *out = (*out+1)%bufferSize;
         }
 
         else
         {
+            /* Change finishLift to indicate that consumer should end loop */
             finishLift = 1;
         }
 
+        /* Unlock mutex and signal waiting producer */
         sem_post(mutex);
         sem_post(empty);
 
+        /* Allow user define time to pass for lift request */
         sleep(sleepTime);
     }
 
     printf("%s Process Finished ...\n", liftArray[i].name);
 
+    /* Close all semaphores */
     sem_close(mutex);
     sem_close(full);
     sem_close(empty);
