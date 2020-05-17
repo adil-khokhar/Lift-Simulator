@@ -13,6 +13,10 @@
 FILE *fileInput;
 FILE *fileOutput;
 
+/*
+ * Function: openFiles
+ * Purpose: Open input and output files for lift simulator
+ */
 void openFiles()
 {
     fileInput = fopen("sim_input", "r+");
@@ -32,6 +36,12 @@ void openFiles()
     fclose(fileOutput);
 }
 
+/*
+ * Function: readNextValue
+ * Purpose: Read next set of values from input file. If file has been fully
+ * read, return the number 66 (not a normally accepted parameter) to
+ * indicate file is finished
+ */
 int* readNextValue(int* reading)
 {
     if(fscanf(fileInput, "%d %d", &reading[0], &reading[1]) != EOF)
@@ -46,6 +56,11 @@ int* readNextValue(int* reading)
     return reading;
 }
 
+/*
+ * Function: writeBuffer
+ * Purpose: Print source, destination and the current request number to output
+ * file when new item gets added to lift buffer
+ */
 void writeBuffer(int source, int destination, int requestNo)
 {
     fileOutput = fopen("sim_output", "a");
@@ -57,6 +72,11 @@ void writeBuffer(int source, int destination, int requestNo)
     fclose(fileOutput);
 }
 
+/*
+ * Function: writeLift
+ * Purpose: Write the lift movement summary when lift serves request from buffer
+ * (accepts lifts struct pointer and uses structs.h)
+ */
 void writeLift(lifts* lift)
 {
     fileOutput = fopen("sim_output", "a");
@@ -74,6 +94,11 @@ void writeLift(lifts* lift)
     fclose(fileOutput);
 }
 
+/*
+ * Function: writeResult
+ * Purpose: Write total movement and total requests at end of output file
+ * when lift simulator has concluded
+ */
 void writeResult(int movement, int requests)
 {
     fileOutput = fopen("sim_output", "a");
@@ -84,6 +109,10 @@ void writeResult(int movement, int requests)
     fclose(fileOutput);
 }
 
+/*
+ * Function: closeFiles
+ * Purpose: Close input file once simulator has finished
+ */
 void closeFiles()
 {
     fclose(fileInput);
