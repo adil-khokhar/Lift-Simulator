@@ -15,6 +15,7 @@ int main(void)
     int numRequests;
     int ii;
 
+    /* Open input file to write */
     fp = fopen("sim_input", "w+");
 
     if (fp == NULL)
@@ -24,12 +25,15 @@ int main(void)
 
     else
     {
+        /* Set starting point for random integers */
         srand(time(0));
 
+        /* Generates random number from 50 to 100 (Number of Requests) */
         numRequests = (rand() % (100 - 50 + 1)) + 50;
 
         printf("Num requests = %d\n", numRequests);
 
+        /* Picks two random numbers between 1 and 20 and prints on new lines each time */
         for(ii = 0; ii < numRequests; ii++)
         {
             randomNum1 = (rand() % (20 - 1 + 1)) + 1;
